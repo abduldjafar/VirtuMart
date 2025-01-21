@@ -9,15 +9,5 @@ use services::{
 
 #[derive(Clone)]
 pub struct AppState {
-    pub gym_services: GymServices,
-    pub gymseeker_services: GymSeekerServices,
-    pub auth_services: AuthServices,
-    pub location_services: LocationServices,
-    pub trainer_services: TrainerServices,
-    pub post_services: PostServices,
-    pub feed_services: FeedServices,
-    pub email_services: EmailServices,
-    pub redis_client: Client,
-    pub environment: Environment,
-    pub cloud_storage: FileStorage,
+
 }
