@@ -1,9 +1,0 @@
-pub mod auth;
-pub mod feed;
-pub mod gym;
-pub mod gymseeker;
-pub mod location;
-pub mod midleware;
-pub mod post;
-pub mod trainer;
-pub mod upload;

@@ -60,67 +60,12 @@ pub async fn run() -> Result<()> {
         std::process::exit(1);
     }
 
-    let gym_repository = GymRepository { repo: conn.clone() };
-    let user_repository = UserRepository { repo: conn.clone() };
-    let gymseeker_repository = GymSeekerRepository { repo: conn.clone() };
-    let location_repository = LocationRepository { repo: conn.clone() };
-    let trainer_repository = TrainerRepository { repo: conn.clone() };
-    let post_repository = PostRepository { repo: conn.clone() };
-    let feed_repository = FeedRepository { repo: conn.clone() };
-
-    let gym_services = GymServices {
-        gym_repository: gym_repository.clone(),
-        user_repository: user_repository.clone(),
-        location_repository: location_repository.clone(),
-    };
-
-    let gymseeker_services = GymSeekerServices {
-        repository: gymseeker_repository.clone(),
-        user_repository: user_repository.clone(),
-    };
-    let auth_services = AuthServices {
-        repo: conn.clone(),
-        user_repository: user_repository.clone(),
-    };
-
-    let location_services = LocationServices {
-        location_repository: location_repository.clone(),
-        user_repository: user_repository.clone(),
-        gym_repository: gym_repository.clone(),
-    };
-
-    let trainer_services = TrainerServices {
-        trainer_repository: trainer_repository.clone(),
-        user_repository: user_repository.clone(),
-        gym_repository: gym_repository.clone(),
-    };
-
-    let post_services = PostServices {
-        trainer_repository: trainer_repository.clone(),
-        user_repository: user_repository.clone(),
-        gym_repository: gym_repository.clone(),
-        gym_seeker_repository: gymseeker_repository.clone(),
-        post_repository: post_repository.clone(),
-        location_repository: location_repository.clone(),
-    };
-
-    let feed_services = FeedServices { feed_repository };
 
     let environment_cloned = environment.clone();
 
     let email_services = EmailServices {};
     let app_state = AppState {
-        gym_services,
-        gymseeker_services,
-        auth_services,
-        location_services,
-        trainer_services,
-        post_services,
-        feed_services,
-        email_services,
-        redis_client,
-        environment: environment_cloned,
-        cloud_storage,
+
     };
 
     let shared_state = Arc::new(app_state);
