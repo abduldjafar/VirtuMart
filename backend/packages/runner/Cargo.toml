@@ -1,0 +1,29 @@
+[package]
+name = "runner"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+environment = { path = "../environment" }
+errors = { path = "../errors" }
+database = { path = "../database" }
+repository = { path = "../repository" }
+services = { path = "../services" }
+router = { path = "../router" }
+state = { path = "../state" }
+file_storage   = { path = "../file_storage" }
+
+axum = {version = "0.7.5",features = ["multipart"] }
+tower-http = { version = "0.5.0", features = ["trace","limit"] }
+redis = { version = "0.27.4", features = ["tokio-comp"] }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing = "0.1.40"
+async-trait = "0.1.80"
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
+
+
+
+
+
+
+

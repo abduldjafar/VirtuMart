@@ -1,0 +1,19 @@
+[package]
+name = "state"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+environment = { path = "../environment" }
+services = { path = "../services" }
+errors = { path = "../errors" }
+file_storage = { path = "../file_storage" }
+
+
+redis = { version = "0.27.4", features = ["tokio-comp"] }
+
+
+
+
+
+

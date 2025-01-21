@@ -1,0 +1,58 @@
+[package]
+name = "rust_backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = {version = "0.7.5",features = ["multipart"] }
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0.202", features = ["derive"] }
+serde_json = "1.0.117"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing = "0.1.40"
+surrealdb = "2.1.4"
+tower-http = { version = "0.5.0", features = ["trace","limit"] }
+async-trait = "0.1.80"
+axum-macros = "0.4.1"
+anyhow = "1"
+httpc-test = "0.1.1"
+chrono = "0.4.38"
+jsonwebtoken = "9.3.0"
+base64 = "0.21.0"
+uuid = { version = "1.3.0", features = ["serde", "v4"] }
+redis = { version = "0.27.4", features = ["tokio-comp"] }
+axum-extra = { version = "0.9.0", features = ["cookie"] }
+argon2 = "0.5.0"
+rand_core = { version = "0.6.4", features = ["std"] }
+time = "0.3.20"
+lettre = "0.11"
+bytes = "1.0"
+google-cloud-storage = "0.22.1"
+mime_guess = "2.0.5"
+google-cloud-auth = "0.17.1"
+urlencoding = "2.1.3"
+dotenv = "0.15.0"
+futures = "0.3.31"
+environment = { path = "packages/environment" }
+errors = { path = "packages/errors" }
+database = { path = "packages/database" }
+repository = { path = "packages/repository" }
+services = { path = "packages/services" }
+authorization = { path = "packages/authorization" }
+router = { path = "packages/router" }
+runner = { path = "packages/runner" }
+file_storage = { path = "packages/file_storage" }
+
+[workspace]
+members = [
+    "packages/database",
+    "packages/errors",
+    "packages/environment",
+    "packages/repository",
+    "packages/services",
+    "packages/authorization",
+    "packages/router",
+    "packages/runner",
+    "packages/state",
+    "packages/file_storage",
+]

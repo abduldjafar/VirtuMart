@@ -1,0 +1,26 @@
+[package]
+name = "file_storage"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+errors = { path = "../errors" }
+bytes = "1.0"
+environment = { path = "../environment" }
+axum = {version = "0.7.5",features = ["multipart"] }
+google-cloud-auth = "0.17.1"
+google-cloud-storage = "0.22.1"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
