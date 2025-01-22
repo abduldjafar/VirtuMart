@@ -1,4 +1,4 @@
-use super::{routes::build_routes, FileStorage, StoragePlatform};
+use super::{FileStorage, StoragePlatform};
 use database::{
     self,
     db::{Connection, Sources},
@@ -7,17 +7,12 @@ use environment::Environment;
 use errors::Result;
 use redis::Client;
 use services::{
-    auth::AuthServices, email::EmailServices, feed::FeedServices, gym::GymServices,
-    gymseeker::GymSeekerServices, location::LocationServices, post::PostServices,
-    trainer::TrainerServices,
 };
 use state::axum_state::AppState;
 use std::sync::Arc;
 
 use repository::{
-    feed::FeedRepository, gym::GymRepository, gymseeker::GymSeekerRepository,
-    location::LocationRepository, post::PostRepository, trainer::TrainerRepository,
-    user::UserRepository,
+
 };
 
 pub async fn run() -> Result<()> {
@@ -63,9 +58,8 @@ pub async fn run() -> Result<()> {
 
     let environment_cloned = environment.clone();
 
-    let email_services = EmailServices {};
     let app_state = AppState {
-
+        redis_client,
     };
 
     let shared_state = Arc::new(app_state);
@@ -77,9 +71,9 @@ pub async fn run() -> Result<()> {
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
         .await
         .unwrap();
-    axum::serve(listener, build_routes(shared_state))
-        .await
-        .unwrap();
+    //axum::serve(listener, build_routes(shared_state))
+        //.await
+       // .unwrap();
 
     Ok(())
 }
