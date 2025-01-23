@@ -1,4 +1,5 @@
-use super::{FileStorage, StoragePlatform};
+use file_storage::interface::FileStorage;
+use file_storage::interface::StoragePlatform;
 use database::{
     self,
     db::{Connection, Sources},
@@ -6,21 +7,15 @@ use database::{
 use environment::Environment;
 use errors::Result;
 use redis::Client;
-use business_logic::{
-};
 use state::axum_state::AppState;
 use std::sync::Arc;
-
-use repository::{
-
-};
 
 pub async fn run() -> Result<()> {
     let mut surreal_db = database::db::DatabaseSource {
         db_type: database::db::DatabaseType::SurrealDB,
     };
-
-    let cloud_storage = FileStorage {
+    
+    let _cloud_storage = FileStorage {
         platform: StoragePlatform::Google,
     };
 
@@ -56,19 +51,19 @@ pub async fn run() -> Result<()> {
     }
 
 
-    let environment_cloned = environment.clone();
+    let _environment_cloned = environment.clone();
 
     let app_state = AppState {
         redis_client,
     };
 
-    let shared_state = Arc::new(app_state);
+    let _shared_state = Arc::new(app_state);
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();
 
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
+    let _listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
         .await
         .unwrap();
     //axum::serve(listener, build_routes(shared_state))

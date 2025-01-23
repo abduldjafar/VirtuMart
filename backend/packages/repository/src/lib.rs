@@ -1,9 +1,6 @@
 use database::{
     db::DatabaseClient,
-    model::{
-        Feed, Gym, GymSeeker, Id, Location, PayloadGymRequest, PayloadGymSeekerRequest,
-        PayloadLocationRequest, PayloadPostResponse, PayloadTrainerRequest, Post, Trainer, User,
-    },
+    model::{Id, User},
 };
 use errors::Result;
 
