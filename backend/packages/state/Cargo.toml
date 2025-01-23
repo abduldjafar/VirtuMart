@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 environment = { path = "../environment" }
-services = { path = "../services" }
+business_logic = { path = "../business_logic" }
 errors = { path = "../errors" }
 file_storage = { path = "../file_storage" }
 

@@ -1,5 +1,5 @@
 [package]
-name = "rust_backend"
+name = "virtumart"
 version = "0.1.0"
 edition = "2021"
 
@@ -37,10 +37,10 @@ environment = { path = "packages/environment" }
 errors = { path = "packages/errors" }
 database = { path = "packages/database" }
 repository = { path = "packages/repository" }
-services = { path = "packages/services" }
+business_logic = { path = "packages/business_logic" }
 authorization = { path = "packages/authorization" }
 router = { path = "packages/router" }
-runner = { path = "packages/runner" }
+app_runner = { path = "packages/app_runner" }
 file_storage = { path = "packages/file_storage" }
 
 [workspace]
@@ -49,10 +49,10 @@ members = [
     "packages/errors",
     "packages/environment",
     "packages/repository",
-    "packages/services",
+    "packages/business_logic",
     "packages/authorization",
     "packages/router",
-    "packages/runner",
+    "packages/app_runner",
     "packages/state",
     "packages/file_storage",
 ]

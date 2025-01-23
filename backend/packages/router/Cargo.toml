@@ -8,7 +8,7 @@ environment = { path = "../environment" }
 errors = { path = "../errors" }
 database = { path = "../database" }
 repository = { path = "../repository" }
-services = { path = "../services" }
+business_logic = { path = "../business_logic" }
 authorization = { path = "../authorization"}
 state = { path = "../state" }
 file_storage = { path = "../file_storage" }
