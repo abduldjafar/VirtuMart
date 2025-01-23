@@ -1,0 +1,36 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow when pushing to the main branch
+  pull_request:
+    branches:
+      - main  # Also trigger on pull requests to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can use macos-latest or windows-latest if necessary
+
+    steps:
+      # Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Rust environment
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      # Install dependencies (Make sure make is installed)
+      - name: Install Make
+        run: sudo apt-get install -y make
+
+      # Set up Docker Buildx (optional, but recommended for multi-platform support)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Run the Makefile to build the Docker image
+      - name: Build Docker image using Makefile
+        run: make build
