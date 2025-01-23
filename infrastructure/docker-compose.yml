@@ -2,31 +2,31 @@ version: "3.8"
 
 services:
   # Rust application service (virtumart)
-  virtumart:
-    build:
-      context: ..
-      dockerfile: infrastructure/Dockerfile
-    container_name: virtumart-app
-    ports:
-      - "8080:8080"
-    depends_on:
-      - redis
-      - minio
-      - surrealdb
-    environment:
-      - REDIS_URL=redis:6379
-      - MINIO_URL=http://minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-      - SURREALDB_URL=http://surrealdb:8000
-    networks:
-      - virtumart-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]  # Adjust the health check for your app
-      interval: 30s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
+  #virtumart:
+  #  build:
+  #    context: ..
+  #    dockerfile: infrastructure/Dockerfile
+  #  container_name: virtumart-app
+  #  ports:
+  #    - "8080:8080"
+  #  depends_on:
+  #    - redis
+  #    - minio
+  #    - surrealdb
+  #  environment:
+  #    - REDIS_URL=redis:6379
+  #    - MINIO_URL=http://minio:9000
+  #    - MINIO_ACCESS_KEY=minioadmin
+  #    - MINIO_SECRET_KEY=minioadmin
+  #    - SURREALDB_URL=http://surrealdb:8000
+  #  networks:
+  #    - virtumart-network
+  #  healthcheck:
+  #    test: ["CMD", "curl", "-f", "http://localhost:8080/health"]  # Adjust the health check for your app
+  #    interval: 30s
+  #    retries: 3
+  #    start_period: 10s
+  #    timeout: 10s
 
   # Redis service
   redis:
@@ -50,10 +50,13 @@ services:
     container_name: virtumart-minio
     ports:
       - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
-    command: server /data
+    volumes:
+      - ./minio-data:/minio-data
+    command: server /data --console-address ":9001"
     networks:
       - virtumart-network
     restart: always
@@ -69,18 +72,17 @@ services:
     image: surrealdb/surrealdb:latest
     container_name: virtumart-surrealdb
     ports:
-      - "8000:8000"
-    environment:
-      - SURREALDB_DB_PATH=/surrealdb
-    networks:
-      - virtumart-network
+      - '8000:8000'
+    volumes:
+      - ./mydata:/mydata
+    command:
+      - start
+      - --log=trace
+      - --user=root
+      - --pass=root
+      - rocksdb:/mydata/dev.db
     restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
-      interval: 30s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
+
 
 networks:
   virtumart-network:

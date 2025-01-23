@@ -14,12 +14,12 @@ build:
 	docker build --platform $(PLATFORM) -f $(DOCKERFILE_DIR)/Dockerfile -t $(DOCKER_IMAGE):$(DOCKER_TAG) $(BUILD_DIR)
 
 # Start Docker containers using docker-compose
-up: build
+up:
 	@echo "Starting Docker containers with docker-compose..."
 	docker-compose -f $(DOCKER_COMPOSE_YML) up --build
 
 # Start Docker containers in detached mode
-up-detached: build
+up-detached:
 	@echo "Starting Docker containers with docker-compose (detached)..."
 	docker-compose -f $(DOCKER_COMPOSE_YML) up -d --build
 
@@ -40,6 +40,11 @@ logs:
 
 # Rebuild Docker image
 rebuild: clean build
+
+# Show status all containers
+show:
+	@echo "Showing status all containers..."
+	docker ps -a | grep virtumart
 
 # Show help
 help:
