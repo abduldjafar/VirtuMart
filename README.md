@@ -10,6 +10,8 @@ Welcome to VirtuMart, a simulated e-commerce backend application built to enhanc
 - Order processing
 - Database integration using SurrealDB
 - Caching and session management using Redis
+## Model Business
+<img width="874" alt="image" src="https://github.com/user-attachments/assets/8fa68b6a-ad10-4838-a24e-6589d4306f3d" />
 
 ## Technologies Used
 
