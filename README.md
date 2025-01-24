@@ -2,36 +2,241 @@
 
 Welcome to VirtuMart, a simulated e-commerce backend application built to enhance my skills in backend development and Rust programming. This project demonstrates the implementation of modern technologies and best practices to create a robust and scalable e-commerce platform.
 
-## Features
+Here’s a `README.md` file with detailed information about the Tokopedia-like ERD and the associated table structures.
 
-- User authentication and authorization
-- Product catalog management
-- Shopping cart functionality
-- Order processing
-- Database integration using SurrealDB
-- Caching and session management using Redis
-## Model Business
-<img width="874" alt="image" src="https://github.com/user-attachments/assets/8fa68b6a-ad10-4838-a24e-6589d4306f3d" />
+---
+## Entities and Relationships
 
-## Technologies Used
+### **Entities:**
+1. **Users**  
+   Represents customers, sellers, and admins.
+2. **Stores**  
+   Represents seller-owned stores listing products.
+3. **Products**  
+   Represents items available for purchase.
+4. **Categories**  
+   Represents product classifications.
+5. **Cart**  
+   Represents the user's temporary storage of items for purchase.
+6. **Orders**  
+   Represents finalized transactions.
+7. **Payments**  
+   Represents payment details for orders.
+8. **Shipping**  
+   Represents shipping information for orders.
+9. **Reviews**  
+   Represents user feedback for products.
 
-- **Programming Language**: Rust
-- **Database**: SurrealDB
-- **Cache**: Redis
-- **Framework**: Axum
-- **Containerization**: Docker
-- **Version Control**: Git
+### **Relationships:**
+- **Users** can own multiple **Stores**.
+- **Stores** list multiple **Products**.
+- **Users** can add multiple **Products** to their **Cart**.
+- **Users** place **Orders** containing multiple **Products**.
+- Each **Order** is associated with a **Payment**.
+- Each **Product** belongs to a **Category**.
+- Each **Order** is tied to a **Shipping** record.
+- **Users** can write **Reviews** for **Products**.
 
-## Getting Started
+---
 
-### Prerequisites
+## Table Structures
 
-To run this project locally, you need to have the following installed:
+### **1. Users**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| name           | VARCHAR(255)| NOT NULL               |
+| email          | VARCHAR(255)| UNIQUE, NOT NULL       |
+| password       | VARCHAR(255)| NOT NULL               |
+| role           | ENUM('customer', 'seller', 'admin') | DEFAULT 'customer' |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
 
-- Rust (latest stable version)
-- Docker
-- Redis
-- SurrealDB
+---
+
+### **2. Stores**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| user_id        | INT         | FOREIGN KEY REFERENCES Users(id) |
+| name           | VARCHAR(255)| NOT NULL               |
+| description    | TEXT        | NULL                   |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+### **3. Products**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| store_id       | INT         | FOREIGN KEY REFERENCES Stores(id) |
+| category_id    | INT         | FOREIGN KEY REFERENCES Categories(id) |
+| name           | VARCHAR(255)| NOT NULL               |
+| price          | DECIMAL(10,2)| NOT NULL              |
+| stock          | INT         | DEFAULT 0             |
+| description    | TEXT        | NULL                   |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+### **4. Categories**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| name           | VARCHAR(255)| NOT NULL               |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+### **5. Cart**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| user_id        | INT         | FOREIGN KEY REFERENCES Users(id) |
+| product_id     | INT         | FOREIGN KEY REFERENCES Products(id) |
+| quantity       | INT         | NOT NULL               |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+### **6. Orders**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| user_id        | INT         | FOREIGN KEY REFERENCES Users(id) |
+| total_amount   | DECIMAL(10,2)| NOT NULL              |
+| status         | ENUM('pending', 'completed', 'cancelled') | DEFAULT 'pending' |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+### **7. Payments**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| order_id       | INT         | FOREIGN KEY REFERENCES Orders(id) |
+| payment_method | VARCHAR(50) | NOT NULL               |
+| payment_date   | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+### **8. Shipping**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| order_id       | INT         | FOREIGN KEY REFERENCES Orders(id) |
+| address        | TEXT        | NOT NULL               |
+| shipping_date  | TIMESTAMP   | NULL                   |
+| status         | ENUM('pending', 'shipped', 'delivered') | DEFAULT 'pending' |
+
+---
+
+### **9. Reviews**
+| Column         | Type        | Constraints             |
+|-----------------|-------------|-------------------------|
+| id             | INT         | PRIMARY KEY, AUTO_INCREMENT |
+| user_id        | INT         | FOREIGN KEY REFERENCES Users(id) |
+| product_id     | INT         | FOREIGN KEY REFERENCES Products(id) |
+| rating         | INT         | CHECK(rating BETWEEN 1 AND 5) |
+| comment        | TEXT        | NULL                   |
+| created_at     | TIMESTAMP   | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+Here’s an updated `README.md` file with the business process, detailed explanation, and the database schema:
+
+---
+
+# Tokopedia-Like Marketplace Database Schema and Business Process
+
+## Overview
+
+This documentation outlines the database schema and detailed business process for a marketplace similar to Tokopedia. It includes user flows, operational workflows, and the entity-relationship diagram (ERD). This serves as a foundation for building a scalable and efficient e-commerce platform.
+
+---
+
+## Business Process
+
+### **User Roles**
+1. **Customer**: Browses, adds products to the cart, places orders, and writes reviews.
+2. **Seller**: Manages a store, lists products, and fulfills orders.
+3. **Admin**: Oversees platform operations, manages users, and resolves disputes.
+
+---
+
+### **Detailed Business Process**
+
+#### 1. **User Registration and Authentication**
+   - Users (both customers and sellers) create an account with their email, name, and password.
+   - Sellers must complete additional verification (e.g., government ID, bank account).
+   - Admins can create or disable user accounts if necessary.
+
+#### 2. **Store Management (Seller)**
+   - Sellers create stores with a name and description.
+   - Sellers add, update, or delete products in their store.
+   - Each product must have a name, price, stock, and category.
+
+#### 3. **Product Browsing and Search**
+   - Customers browse the platform by searching for products or filtering by category, price, or ratings.
+   - Each product displays its name, price, description, seller info, and reviews.
+
+#### 4. **Cart Management (Customer)**
+   - Customers add products to their cart.
+   - The system ensures that the product stock is available.
+   - Customers can update product quantities in the cart or remove items.
+
+#### 5. **Order Placement and Payment**
+   - Customers place an order by checking out their cart.
+   - The system creates an order and calculates the total cost.
+   - Customers choose a payment method (e.g., credit card, e-wallet, bank transfer).
+   - Upon successful payment, the order status updates to "paid."
+
+#### 6. **Order Fulfillment (Seller and Shipping)**
+   - Sellers receive notifications about new orders.
+   - Sellers prepare the order and provide shipping information.
+   - The order status updates to "shipped."
+   - The shipping company tracks delivery and updates the status to "delivered."
+
+#### 7. **Review and Feedback**
+   - After delivery, customers can leave reviews and ratings for the product.
+   - Reviews are tied to both the product and the customer who wrote them.
+   - Sellers can view and respond to reviews to improve their service.
+
+#### 8. **Admin Oversight**
+   - Admins manage user accounts, stores, and products.
+   - Admins monitor disputes between customers and sellers.
+   - Admins ensure compliance with marketplace policies.
+
+---
+
+## User Flows
+
+### **Customer Journey**
+1. Register and log in.
+2. Browse and search for products.
+3. Add products to the cart.
+4. Place an order and complete payment.
+5. Receive products and leave a review.
+
+### **Seller Journey**
+1. Register and create a store.
+2. Add products with detailed information.
+3. Fulfill incoming orders and manage shipping.
+4. Respond to customer reviews.
+
+### **Admin Workflow**
+1. Monitor and manage the platform.
+2. Resolve disputes and enforce policies.
+3. Oversee platform analytics and user activity.
+
+---
+
+## Additional Notes
+
+- **Scalability**: The schema is designed to support millions of users, products, and transactions.
+- **Security**: Sensitive data, like passwords, should be encrypted.
+- **Optimization**: Indexes should be created on frequently queried fields, such as `email` in the Users table and `name` in the Products table.
+
+This documentation provides the foundational steps to build and manage a marketplace platform. It can be further customized to include advanced features like promotions, seller dashboards, and recommendation engines.
 
 ### Installation
 
