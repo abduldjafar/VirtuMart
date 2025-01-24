@@ -142,18 +142,6 @@ Here’s a `README.md` file with detailed information about the Tokopedia-like E
 
 ---
 
-Here’s an updated `README.md` file with the business process, detailed explanation, and the database schema:
-
----
-
-# Tokopedia-Like Marketplace Database Schema and Business Process
-
-## Overview
-
-This documentation outlines the database schema and detailed business process for a marketplace similar to Tokopedia. It includes user flows, operational workflows, and the entity-relationship diagram (ERD). This serves as a foundation for building a scalable and efficient e-commerce platform.
-
----
-
 ## Business Process
 
 ### **User Roles**
