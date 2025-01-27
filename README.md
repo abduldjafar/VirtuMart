@@ -2,8 +2,6 @@
 
 Welcome to VirtuMart, a simulated e-commerce backend application built to enhance my skills in backend development and Rust programming. This project demonstrates the implementation of modern technologies and best practices to create a robust and scalable e-commerce platform.
 
-Here’s a `README.md` file with detailed information about the Tokopedia-like ERD and the associated table structures.
-
 ---
 ## Entities and Relationships
 
