@@ -1,4 +1,4 @@
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use database::{
     db::DatabaseClient,
     interface::DBInterface,
@@ -20,7 +20,7 @@ impl AuthServices {
     #[tracing::instrument(err, skip_all)]
     pub async fn user_verification(&self, token: String) -> Result<bool> {
         let repo = &self.repo;
-        let time_now: surrealdb::sql::Datetime = surrealdb::sql::Datetime::from(Utc::now());
+        let time_now: DateTime<Utc> = Utc::now();
 
         let vect_data: Vec<PayloadUserResponse> = repo
             .select_where(
@@ -50,7 +50,7 @@ impl AuthServices {
         let updated_data = User {
             id: Some(cloned_user.id),
             username: cloned_user.username,
-            user_type: cloned_user.user_type,
+            role: cloned_user.role,
             email: cloned_user.email,
             password: cloned_user.password,
             verified: user.verified,

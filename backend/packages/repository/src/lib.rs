@@ -1,6 +1,6 @@
 use database::{
     db::DatabaseClient,
-    model::{Id, User},
+    model::User,
 };
 use errors::Result;
 
@@ -12,4 +12,3 @@ type RepositoryResult<T> = Result<T>;
 
 
 type UserModel = User;
-type UserId = Id;

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use super::{DBClient, RepositoryResult, UserId, UserModel};
+use super::{DBClient, RepositoryResult, UserModel};
 use database::interface::DBInterface as _;
 
 #[derive(Clone, Debug)]
@@ -9,30 +9,10 @@ pub struct UserRepository {
 }
 
 impl UserRepository {
-    pub async fn insert_data(&self, data: UserModel) -> RepositoryResult<Option<UserId>> {
+    pub async fn insert_data(&self, data: UserModel) -> RepositoryResult<Option<String>> {
         let repo = &self.repo;
-        let insert_into_user_tb: Option<UserId> =
+        let insert_into_user_tb: Option<String> =
             repo.insert_record(String::from("user"), data).await?;
         Ok(insert_into_user_tb)
-    }
-
-    pub async fn is_data_empty_by_username(
-        &self,
-        data: &UserModel,
-    ) -> RepositoryResult<(bool, Vec<UserModel>)> {
-        let repo = &self.repo;
-
-        let data_exists = {
-            let data: Vec<UserModel> = repo
-                .select_where(
-                    "user".to_owned(),
-                    format!("username = '{}'", data.username),
-                    "*".to_string(),
-                )
-                .await?;
-            (data.is_empty(), data)
-        };
-
-        Ok(data_exists)
     }
 }
