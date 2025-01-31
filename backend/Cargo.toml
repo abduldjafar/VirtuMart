@@ -7,24 +7,12 @@ edition = "2021"
 tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
 environment = { path = "packages/environment" }
 errors = { path = "packages/errors" }
-database = { path = "packages/database" }
-repository = { path = "packages/repository" }
-business_logic = { path = "packages/business_logic" }
-authorization = { path = "packages/authorization" }
-router = { path = "packages/router" }
-app_runner = { path = "packages/app_runner" }
-file_storage = { path = "packages/file_storage" }
+model = { path = "packages/model" }
+
 
 [workspace]
 members = [
-    "packages/database",
-    "packages/errors",
     "packages/environment",
-    "packages/repository",
-    "packages/business_logic",
-    "packages/authorization",
-    "packages/router",
-    "packages/app_runner",
-    "packages/state",
-    "packages/file_storage",
+    "packages/errors",
+    "packages/model"
 ]
