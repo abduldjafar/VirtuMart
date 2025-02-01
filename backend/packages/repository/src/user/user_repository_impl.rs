@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use model::domain::user::User;
 use model::surreal_db::user::User as UserSurreal;
 use super::user_repository::{UserRepository, UserRepositoryTrait};
@@ -5,7 +6,7 @@ use errors::Result;
 use database::interface::DBInterface as _;
 
 
-
+#[async_trait]
 impl UserRepositoryTrait for UserRepository {
     async fn insert_data(&self, data:User ) -> Result<String> {
         let result:Option<UserSurreal> = self.repo.insert_record("user",data).await?;

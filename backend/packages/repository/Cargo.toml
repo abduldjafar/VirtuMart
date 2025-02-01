@@ -8,3 +8,10 @@ environment = { path = "../environment" }
 errors = { path = "../errors" }
 database = { path = "../database" }
 model = { path = "../model" }
+async-trait = "0.1.85"
+
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
+errors = { path = "../errors" }
+surrealdb = "2.1.4"
