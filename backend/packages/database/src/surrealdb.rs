@@ -72,6 +72,7 @@ impl DBInterface for SurrealDb {
         };
 
         let sql = format!("SELECT {} FROM {} {}", tb_columns, tb_name, filtered_query);
+        println!("SQL: {}", sql);
 
         let mut results = client.query(&sql).await?;
         let data: Vec<T> = results.take(0)?;

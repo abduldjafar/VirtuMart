@@ -1,13 +1,13 @@
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
+use surrealdb::sql::Thing;
 
 #[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct  User {
-    pub id: i32,
+    pub id: Option<Thing>,
     pub username: String,
     pub email: String,
     pub role: String,
-    pub password: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
