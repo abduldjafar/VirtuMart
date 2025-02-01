@@ -8,11 +8,13 @@ tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
 environment = { path = "packages/environment" }
 errors = { path = "packages/errors" }
 model = { path = "packages/model" }
+database = { path = "packages/database" }
 
 
 [workspace]
 members = [
     "packages/environment",
     "packages/errors",
-    "packages/model"
+    "packages/model",
+    "packages/database"
 ]

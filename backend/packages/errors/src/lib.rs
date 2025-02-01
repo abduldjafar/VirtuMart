@@ -13,7 +13,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[derive(Clone, Debug, Serialize)]
 pub enum Error {
     LoginFail,
-    DatabaseError(String),
+    DatabaseErrorTransaction(String),
     DataExist(String),
     DataNotAvaliable(String),
     TokenError(String),
@@ -24,7 +24,8 @@ pub enum Error {
     UserNotVerified(String),
     UploadProcessingError(String),
     CloudAuthError(String),
-    InvalidUserType(String),
+    InvalidUserRole(String),
+
 }
 
 impl core::fmt::Display for Error {
@@ -37,7 +38,7 @@ impl std::error::Error for Error {}
 
 impl From<surrealdb::Error> for Error {
     fn from(error: surrealdb::Error) -> Self {
-        Error::DatabaseError(error.to_string())
+        Error::DatabaseErrorTransaction(error.to_string())
     }
 }
 
@@ -61,7 +62,7 @@ impl From<FromUtf8Error> for Error {
 
 impl From<RedisError> for Error {
     fn from(error: RedisError) -> Self {
-        Error::DatabaseError(error.to_string())
+        Error::DatabaseErrorTransaction(error.to_string())
     }
 }
 
@@ -73,7 +74,7 @@ impl From<uuid::Error> for Error {
 
 impl From<argon2::password_hash::Error> for Error {
     fn from(error: argon2::password_hash::Error) -> Self {
-        Error::DatabaseError(error.to_string())
+        Error::DatabaseErrorTransaction(error.to_string())
     }
 }
 
@@ -99,7 +100,7 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response<Body> {
         let (status, error_message) = match &self {
             Error::LoginFail => (StatusCode::UNAUTHORIZED, "Login failed".to_string()),
-            Error::DatabaseError(error) => (
+            Error::DatabaseErrorTransaction(error) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("There was a problem with the database: {}", error),
             ),
@@ -122,7 +123,7 @@ impl IntoResponse for Error {
             Error::CloudAuthError(message) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
             }
-            Error::InvalidUserType(message) => (StatusCode::FORBIDDEN, message.to_string()),
+            Error::InvalidUserRole(message) => (StatusCode::FORBIDDEN, message.to_string()),
         };
 
         let body = Body::from(

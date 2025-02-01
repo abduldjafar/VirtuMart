@@ -1,0 +1,15 @@
+[package]
+name = "database"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+surrealdb = "2.1.4"
+async-trait = "0.1.85"
+serde = { version = "1.0.202", features = ["derive"] }
+environment = { path = "../environment" }
+errors = { path = "../errors" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
+errors = { path = "../errors" }
