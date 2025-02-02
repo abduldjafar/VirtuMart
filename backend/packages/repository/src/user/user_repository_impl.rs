@@ -9,16 +9,21 @@ use database::interface::DBInterface as _;
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
     async fn insert_data(&self, data:User ) -> Result<String> {
-        let result:Option<UserSurreal> = self.repo.insert_record("user",data).await?;
-        Ok(result.unwrap().id.unwrap().to_string())
+        let result:Option<UserSurreal> = self.db.insert_record("user",data).await?;
+        Ok(result.unwrap().id.unwrap().id.to_string())
     }
+    
+}
+
+
+impl UserRepository {
     async fn is_data_empty_by_username(
         &self,
         data: &User,
     ) -> Result<(bool, Vec<User>)> {
         
         let data_exists = {
-            let data: Vec<User> = self.repo
+            let data: Vec<User> = self.db
                 .select_where(
                     "user",
                     format!("username = '{}'", data.username).as_str(),
@@ -30,5 +35,4 @@ impl UserRepositoryTrait for UserRepository {
 
         Ok(data_exists)
     }
-    
 }

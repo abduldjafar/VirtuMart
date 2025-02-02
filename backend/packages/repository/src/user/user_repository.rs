@@ -6,16 +6,12 @@ use async_trait::async_trait;
 
 #[derive(Clone, Debug)]
 pub struct UserRepository {
-    pub repo: Arc<DatabaseClient>,
+    pub db: Arc<DatabaseClient>,
 }
 
 
 #[async_trait]
 pub trait UserRepositoryTrait {
     async fn insert_data(&self, data:User ) -> Result<String>;
-    async fn is_data_empty_by_username(
-        &self,
-        data: &User,
-    ) -> Result<(bool, Vec<User>)> ;
     
 }
