@@ -9,6 +9,7 @@ async-trait = "0.1.85"
 serde = { version = "1.0.202", features = ["derive"] }
 environment = { path = "../environment" }
 errors = { path = "../errors" }
+model = { path = "../model" }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }

@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use errors::Result;
+use serde::{Deserialize, Serialize};
 
 #[cfg(test)]
 mod tests {
@@ -9,8 +9,8 @@ mod tests {
     use environment::Environment;
     use surrealdb::engine::remote::ws::{Client, Ws};
     use surrealdb::opt::auth::Root;
-    use surrealdb::Surreal;
     use surrealdb::sql::Thing;
+    use surrealdb::Surreal;
     use tokio::test;
 
     #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -34,7 +34,7 @@ mod tests {
         let mut surreal_db = database::database::DatabaseSource {
             db_type: database::database::DatabaseType::SurrealDB,
         };
-        
+
         let data = surreal_db.connect().await?;
         Ok(data)
     }
@@ -51,10 +51,7 @@ mod tests {
             })
             .await?;
 
-        client
-            .use_ns(env.db_namespace)
-            .use_db(env.db_name)
-            .await?;
+        client.use_ns(env.db_namespace).use_db(env.db_name).await?;
 
         Ok(client)
     }
@@ -67,10 +64,14 @@ mod tests {
             name: "Test".to_string(),
         };
 
-        let insert_result: Option<ResultTestRecord> = db.insert_record("test_insert_table", record).await?;
+        let insert_result: Option<ResultTestRecord> =
+            db.insert_record("test_insert_table", record).await?;
         assert!(insert_result.is_some());
 
-        setup_direct_db().await?.query("DELETE test_insert_table").await?;
+        setup_direct_db()
+            .await?
+            .query("DELETE test_insert_table")
+            .await?;
 
         Ok(())
     }
@@ -78,17 +79,25 @@ mod tests {
     #[test]
     async fn test_update_record() -> Result<()> {
         let db = setup_db().await?;
-        
-        setup_direct_db().await?.query("INSERT INTO test_update_table (id, name) VALUES ('2', 'Test')").await?;
+
+        setup_direct_db()
+            .await?
+            .query("INSERT INTO test_update_table (id, name) VALUES ('2', 'Test')")
+            .await?;
 
         let updated_record = UpdateTestRecord {
             name: "Test2".to_string(),
         };
 
-        let success = db.update_record("2", "test_update_table", updated_record).await?;
+        let success = db
+            .update_record("2", "test_update_table", updated_record)
+            .await?;
         assert!(success);
 
-        setup_direct_db().await?.query("DELETE test_update_table").await?;
+        setup_direct_db()
+            .await?
+            .query("DELETE test_update_table")
+            .await?;
 
         Ok(())
     }
@@ -96,13 +105,19 @@ mod tests {
     #[test]
     async fn test_select_records() -> Result<()> {
         let db = setup_db().await?;
-        
-        setup_direct_db().await?.query("INSERT INTO test_select_table (id, name) VALUES ('3', 'Test')").await?;
+
+        setup_direct_db()
+            .await?
+            .query("INSERT INTO test_select_table (id, name) VALUES ('3', 'Test')")
+            .await?;
 
         let records: Vec<ResultTestRecord> = db.select("test_select_table").await?;
         assert_eq!(records.len(), 1);
 
-        setup_direct_db().await?.query("DELETE test_select_table").await?;
+        setup_direct_db()
+            .await?
+            .query("DELETE test_select_table")
+            .await?;
 
         Ok(())
     }
@@ -110,8 +125,11 @@ mod tests {
     #[test]
     async fn test_delete_record() -> Result<()> {
         let db = setup_db().await?;
-        
-        setup_direct_db().await?.query("INSERT INTO test_delete_table (id, name) VALUES ('4', 'Test')").await?;
+
+        setup_direct_db()
+            .await?
+            .query("INSERT INTO test_delete_table (id, name) VALUES ('4', 'Test')")
+            .await?;
 
         let success = db.delete("test_delete_table:4").await?;
         assert!(success);
@@ -124,13 +142,22 @@ mod tests {
         let db = setup_db().await?;
 
         let direct_db = setup_direct_db().await?;
-        direct_db.query("INSERT INTO test_select_where_table (id, name) VALUES ('5', 'Test')").await?; 
-        direct_db.query("INSERT INTO test_select_where_table (id, name) VALUES ('6', 'Test2')").await?;
+        direct_db
+            .query("INSERT INTO test_select_where_table (id, name) VALUES ('5', 'Test')")
+            .await?;
+        direct_db
+            .query("INSERT INTO test_select_where_table (id, name) VALUES ('6', 'Test2')")
+            .await?;
 
-        let records: Vec<ResultTestRecord> = db.select_where("test_select_where_table", "name='Test'", "name").await?;
+        let records: Vec<ResultTestRecord> = db
+            .select_where("test_select_where_table", "name='Test'", "name")
+            .await?;
 
         assert_eq!(records.len(), 1);
-        setup_direct_db().await?.query("DELETE FROM test_select_where_table").await?;
+        setup_direct_db()
+            .await?
+            .query("DELETE FROM test_select_where_table")
+            .await?;
 
         Ok(())
     }

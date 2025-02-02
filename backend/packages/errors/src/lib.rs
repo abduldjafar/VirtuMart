@@ -25,7 +25,6 @@ pub enum Error {
     UploadProcessingError(String),
     CloudAuthError(String),
     InvalidUserRole(String),
-
 }
 
 impl core::fmt::Display for Error {

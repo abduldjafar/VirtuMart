@@ -1,38 +1,20 @@
+use super::user_repository::{UserRepository, UserRepositoryTrait};
 use async_trait::async_trait;
+use database::interface::DBInterface as _;
+use errors::Result;
 use model::domain::user::User;
 use model::surreal_db::user::User as UserSurreal;
-use super::user_repository::{UserRepository, UserRepositoryTrait};
-use errors::Result;
-use database::interface::DBInterface as _;
-
+use serde_json::Value;
 
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
-    async fn insert_data(&self, data:User ) -> Result<String> {
-        let result:Option<UserSurreal> = self.db.insert_record("user",data).await?;
+    async fn insert_data(&self, data: User) -> Result<String> {
+        let result: Option<UserSurreal> = self.db.insert_record("user", data).await?;
         Ok(result.unwrap().id.unwrap().id.to_string())
     }
-    
-}
 
-
-impl UserRepository {
-    async fn is_data_empty_by_username(
-        &self,
-        data: &User,
-    ) -> Result<(bool, Vec<User>)> {
-        
-        let data_exists = {
-            let data: Vec<User> = self.db
-                .select_where(
-                    "user",
-                    format!("username = '{}'", data.username).as_str(),
-                    "*",
-                )
-                .await?;
-            (data.is_empty(), data)
-        };
-
-        Ok(data_exists)
+    async fn update_data(&self, id: &str, data: Value) -> Result<bool> {
+        let result: bool = self.db.update_record(id, "user", data).await?;
+        Ok(result)
     }
 }

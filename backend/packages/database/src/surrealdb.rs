@@ -46,10 +46,11 @@ impl DBInterface for SurrealDb {
     {
         let data_id: Vec<&str> = id.split(':').collect();
         let client = self.client.clone().unwrap();
-        let updated_result: Option<T> = client.update((tb_name, data_id[0])).content(data).await?;
+
+        let updated_result: Option<model::surreal_db::user::ReturnedUser> =
+            client.update((tb_name, data_id[1])).merge(data).await?;
         Ok(updated_result.is_some())
     }
-
     /* Method to select records with parameters from the database */
     async fn select_where<T: DeserializeOwned + Sync>(
         &self,

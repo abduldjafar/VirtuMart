@@ -1,0 +1,6 @@
+edition = "2021"  # Use Rust 2021 edition
+max_width = 100   # Line width limit
+hard_tabs = false  # Use spaces instead of tabs
+newline_style = "Unix"  # Ensure Unix-style line endings
+reorder_imports = true  # Automatically reorder imports
+reorder_modules = true  # Keep module order clean

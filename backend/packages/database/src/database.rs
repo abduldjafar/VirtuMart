@@ -1,11 +1,13 @@
-
 /* Define the SurrealDb struct */
 
 use async_trait::async_trait;
 use environment::Environment;
-use surrealdb::{engine::remote::ws::{Client, Ws}, opt::auth::Root, Surreal};
 use errors::Result;
-
+use surrealdb::{
+    engine::remote::ws::{Client, Ws},
+    opt::auth::Root,
+    Surreal,
+};
 
 #[derive(Clone, Debug)]
 pub struct SurrealDb {
@@ -13,7 +15,7 @@ pub struct SurrealDb {
 }
 
 pub enum DatabaseType {
-    SurrealDB
+    SurrealDB,
 }
 
 #[derive(Clone, Debug)]
