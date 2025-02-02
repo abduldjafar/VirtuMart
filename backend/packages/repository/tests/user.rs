@@ -4,7 +4,6 @@
 mod tests {
     use std::sync::Arc;
 
-    use super::*;
     use database::database::{DatabaseClient, SurrealDb};
     use environment::Environment;
     use repository::user::user_repository::UserRepository;
