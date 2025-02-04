@@ -67,3 +67,14 @@ run_prod:
 	@$(CARGO) build --release
 	@echo "Running in production mode..."
 	@./target/release/$(TARGET)
+
+# Push code to GitHub with a dynamic commit message
+push_code: run_tests
+	@echo "Pushing code to GitHub..."
+	@if [ -z "$(COMMIT_MSG)" ]; then \
+        echo "Commit message is required. Use COMMIT_MSG='your commit message'"; \
+        exit 1; \
+	fi
+	@git add .
+	@git commit -m "$(COMMIT_MSG)"
+	@git push
