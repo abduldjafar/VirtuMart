@@ -18,3 +18,25 @@ impl UserRepositoryTrait for UserRepository {
         Ok(result)
     }
 }
+
+impl UserRepository {
+    pub async fn is_data_empty_by_username(&self, username: &str) -> Result<bool> {
+        let db = &self.db;
+
+        let data: Vec<Value> = db
+            .select_where("user", &format!("username = '{}'", username), "username")
+            .await?;
+
+        Ok(data.is_empty())
+    }
+
+    pub async fn is_data_empty_by_email(&self, email: &str) -> Result<bool> {
+        let db = &self.db;
+
+        let data: Vec<Value> = db
+            .select_where("user", &format!("email = '{}'", email), "email")
+            .await?;
+
+        Ok(data.is_empty())
+    }
+}

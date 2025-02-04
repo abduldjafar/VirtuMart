@@ -51,7 +51,7 @@ mod tests {
     async fn test_insert_data() -> Result<()> {
         let user_repo = setup_user_repo().await.unwrap();
         let user = model::domain::user::User {
-            id: 1,
+            id: "1".to_string(),
             username: "test".to_string(),
             password: "test".to_string(),
             role: "buyer".to_string(),
@@ -69,7 +69,34 @@ mod tests {
             .await?;
         Ok(())
     }
+    #[test]
+    async fn test_is_data_empty_by_username() -> Result<()> {
+        let user_repo = setup_user_repo().await.unwrap();
+        setup_direct_db()
+            .await
+            .unwrap()
+            .query(
+                r#"
+            -- Create a new record with a numeric id
+            CREATE user:user_12347 CONTENT {
+                username: 'Tobies7',
+                password: 'password',
+                role: 'buyer',
+                email: '',
+                created_at: time::now(),
+                updated_at: time::now()
+            };
+        "#,
+            )
+            .await?;
 
+        let is_empty = user_repo
+            .is_data_empty_by_username("Tobies7")
+            .await
+            .unwrap();
+        assert_eq!(is_empty, false);
+        Ok(())
+    }
     #[test]
     async fn test_update_data() -> Result<()> {
         let user_repo = setup_user_repo().await.unwrap();

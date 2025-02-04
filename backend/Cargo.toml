@@ -10,6 +10,7 @@ errors = { path = "packages/errors" }
 model = { path = "packages/model" }
 database = { path = "packages/database" }
 repository = { path = "packages/repository" }
+service = { path = "packages/service" }
 
 
 [workspace]
@@ -18,6 +19,7 @@ members = [
     "packages/errors",
     "packages/model",
     "packages/database",
-    "packages/repository"
+    "packages/repository",
+    "packages/service"
 
 ]
