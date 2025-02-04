@@ -8,13 +8,12 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /* Implementation of DBInterface for SurrealDb */
 #[async_trait]
 impl DBInterface for SurrealDb {
-    
     /// Method to insert a record into the database
     ///
     /// Using `ok_or_else` instead of `ok_or` is generally preferred for better performance and idiomatic Rust code.
     /// The `ok_or_else` method allows you to lazily evaluate the error value only if the `Option` is `None`,
     /// whereas `ok_or` always evaluates the error value, even if it is not needed.
-    
+
     async fn insert_record<T, U>(&self, tb_name: &str, data: T) -> Result<Option<U>>
     where
         T: Serialize + Sync + Send + 'static,
