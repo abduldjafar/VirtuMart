@@ -16,7 +16,7 @@ pub struct User {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ReturnedUser {
     pub id: Option<Thing>,
-    pub username: String,
+    pub username: Option<String>,
     pub email: Option<String>,
     pub role: Option<String>,
     pub created_at: Option<DateTime<Utc>>,

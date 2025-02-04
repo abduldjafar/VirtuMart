@@ -1,6 +1,7 @@
 use super::interface;
 use crate::database::SurrealDb;
 use async_trait::async_trait;
+use errors::Error::DatabaseErrorExecution;
 use errors::Result;
 use interface::DBInterface;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -20,7 +21,7 @@ impl DBInterface for SurrealDb {
         U: DeserializeOwned + Sync + Clone + 'static,
     {
         let client = self.client.clone().ok_or_else(|| {
-            errors::Error::DatabaseErrorExecution("surrealdb: Client connection error".to_string())
+            DatabaseErrorExecution("surrealdb: Client connection error".to_string())
         })?;
         let created: Vec<U> = client.insert(tb_name).content(data).await?;
         let record = created.first().cloned();
@@ -30,7 +31,7 @@ impl DBInterface for SurrealDb {
     /* Method to select records from the database */
     async fn select<T: DeserializeOwned + Sync>(&self, tb_name: &str) -> Result<Vec<T>> {
         let client = self.client.clone().ok_or_else(|| {
-            errors::Error::DatabaseErrorExecution("surrealdb: Client connection error".to_string())
+            DatabaseErrorExecution("surrealdb: Client connection error".to_string())
         })?;
         let data: Vec<T> = client.select(tb_name).await?;
         Ok(data)
@@ -39,7 +40,7 @@ impl DBInterface for SurrealDb {
     /* Method to delete a record from the database */
     async fn delete(&self, id: &str) -> Result<bool> {
         let client = self.client.clone().ok_or_else(|| {
-            errors::Error::DatabaseErrorExecution("surrealdb: Client connection error".to_string())
+            DatabaseErrorExecution("surrealdb: Client connection error".to_string())
         })?;
         let result = client.query(format!("DELETE {}", id)).await?.check();
         Ok(result.is_ok())
@@ -52,10 +53,10 @@ impl DBInterface for SurrealDb {
     {
         let data_id: Vec<&str> = id.split(':').collect();
         let client = self.client.clone().ok_or_else(|| {
-            errors::Error::DatabaseErrorExecution("surrealdb: Client connection error".to_string())
+            DatabaseErrorExecution("surrealdb: Client connection error".to_string())
         })?;
         let updated_result: Option<model::surreal_db::user::ReturnedUser> =
-            client.update((tb_name, data_id[1])).merge(data).await?;
+            client.update((tb_name, data_id[0])).merge(data).await?;
         Ok(updated_result.is_some())
     }
 
@@ -66,12 +67,9 @@ impl DBInterface for SurrealDb {
         filter: &str,
         columns: &str,
     ) -> Result<Vec<T>> {
-        let client = self
-            .client
-            .clone()
-            .ok_or(errors::Error::DatabaseErrorExecution(
-                "surrealdb: Client connection error".to_string(),
-            ))?;
+        let client = self.client.clone().ok_or(DatabaseErrorExecution(
+            "surrealdb: Client connection error".to_string(),
+        ))?;
 
         let filtered_query = if filter.is_empty() {
             String::new()
