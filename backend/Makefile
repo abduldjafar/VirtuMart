@@ -75,6 +75,10 @@ push_code: run_tests
         echo "Commit message is required. Use COMMIT_MSG='your commit message'"; \
         exit 1; \
 	fi
-	@git add .
-	@git commit -m "$(COMMIT_MSG)"
-	@git push
+	@if git diff-index --quiet HEAD --; then \
+		echo "Nothing to commit, working tree clean"; \
+    else \
+		git add .; \
+		git commit -m "$(COMMIT_MSG)"; \
+		git push; \
+	fi
