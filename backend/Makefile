@@ -82,3 +82,4 @@ push_code: run_tests
 		git commit -m "$(COMMIT_MSG)"; \
 		git push; \
 	fi
+
