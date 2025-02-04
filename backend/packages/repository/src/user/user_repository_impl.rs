@@ -1,6 +1,7 @@
 use super::user_repository::{UserRepository, UserRepositoryTrait};
 use async_trait::async_trait;
 use database::interface::DBInterface as _;
+use errors::Error::DataNotAvaliable;
 use errors::Result;
 use model::domain::user::User;
 use model::surreal_db::user::User as UserSurreal;
@@ -10,7 +11,15 @@ use serde_json::Value;
 impl UserRepositoryTrait for UserRepository {
     async fn insert_data(&self, data: User) -> Result<String> {
         let result: Option<UserSurreal> = self.db.insert_record("user", data).await?;
-        Ok(result.unwrap().id.unwrap().id.to_string())
+        let id = result
+            .ok_or(DataNotAvaliable("id".to_string()))?
+            .id
+            .ok_or(DataNotAvaliable("id".to_string()))?
+            .id
+            .to_string()
+            .replace("⟨", "")
+            .replace("⟩", "");
+        Ok(id)
     }
 
     async fn update_data(&self, id: &str, data: Value) -> Result<bool> {
