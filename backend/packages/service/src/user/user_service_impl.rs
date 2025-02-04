@@ -1,5 +1,6 @@
 use super::user_service::{UserService, UserServiceTrait};
 use async_trait::async_trait;
+use errors::Error::DataExist;
 use errors::Result;
 use model::domain::user::User;
 use repository::user::user_repository::UserRepositoryTrait as _;
@@ -15,14 +16,11 @@ impl UserServiceTrait for UserService {
         let is_empty_by_email = self.user_repo.is_data_empty_by_email(&data.email).await?;
 
         if !is_empty_by_username {
-            return Err(errors::Error::DataExist(format!(
-                "username:{}",
-                data.username
-            )));
+            return Err(DataExist(format!("username:{}", data.username)));
         }
 
         if !is_empty_by_email {
-            return Err(errors::Error::DataExist(format!("email:{}", data.email)));
+            return Err(DataExist(format!("email:{}", data.email)));
         }
 
         self.user_repo.insert_data(data).await
