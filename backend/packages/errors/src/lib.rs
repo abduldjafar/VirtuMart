@@ -13,7 +13,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[derive(Clone, Debug, Serialize)]
 pub enum Error {
     LoginFail,
-    DatabaseErrorTransaction(String),
+    DatabaseErrorExecution(String),
     DataExist(String),
     DataNotAvaliable(String),
     TokenError(String),
@@ -37,7 +37,7 @@ impl std::error::Error for Error {}
 
 impl From<surrealdb::Error> for Error {
     fn from(error: surrealdb::Error) -> Self {
-        Error::DatabaseErrorTransaction(error.to_string())
+        Error::DatabaseErrorExecution(error.to_string())
     }
 }
 
@@ -61,7 +61,7 @@ impl From<FromUtf8Error> for Error {
 
 impl From<RedisError> for Error {
     fn from(error: RedisError) -> Self {
-        Error::DatabaseErrorTransaction(error.to_string())
+        Error::DatabaseErrorExecution(error.to_string())
     }
 }
 
@@ -73,7 +73,7 @@ impl From<uuid::Error> for Error {
 
 impl From<argon2::password_hash::Error> for Error {
     fn from(error: argon2::password_hash::Error) -> Self {
-        Error::DatabaseErrorTransaction(error.to_string())
+        Error::DatabaseErrorExecution(error.to_string())
     }
 }
 
@@ -99,7 +99,7 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response<Body> {
         let (status, error_message) = match &self {
             Error::LoginFail => (StatusCode::UNAUTHORIZED, "Login failed".to_string()),
-            Error::DatabaseErrorTransaction(error) => (
+            Error::DatabaseErrorExecution(error) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("There was a problem with the database: {}", error),
             ),

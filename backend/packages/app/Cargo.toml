@@ -1,0 +1,14 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+environment = { path = "../environment" }
+errors = { path = "../errors" }
+database = { path = "../database" }
+repository = { path = "../repository" }
+service = { path = "../service" }
+state = { path = "../state" }
+
+async-trait = "0.1.80"

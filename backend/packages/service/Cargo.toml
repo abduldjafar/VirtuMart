@@ -1,0 +1,15 @@
+[package]
+name = "service"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.85"
+environment = { path = "../environment" }
+errors = { path = "../errors" }
+repository = { path = "../repository" }
+model = { path = "../model" }
+serde_json = "1.0.138"
+argon2 = "0.5.0"
+chrono = "0.4.39"
+
