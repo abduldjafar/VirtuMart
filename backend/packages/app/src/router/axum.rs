@@ -7,6 +7,7 @@ use redis::Client;
 use repository::user::user_repository::UserRepository;
 use service::user::user_service::UserService;
 use state::axum::AppState;
+use tracing::{info,error};
 
 use super::axum_routes::build_routes;
 
@@ -27,11 +28,11 @@ pub async fn run() -> Result<()> {
 
     let _redis_client = match Client::open(redis_url) {
         Ok(client) => {
-            println!("✅ Connection to Redis is successful!");
+            info!("✅ Connection to Redis is successful!");
             client
         }
         Err(e) => {
-            println!("🔥 Error connecting to Redis: {}", e);
+            error!("🔥 Error connecting to Redis: {}", e);
             std::process::exit(1);
         }
     };
@@ -40,9 +41,9 @@ pub async fn run() -> Result<()> {
     let ping_db = conn.ping();
 
     if ping_db == *"Pong!" {
-        println!("✅ {} from database!", ping_db);
+        info!("✅ {} from database!", ping_db);
     } else {
-        println!("🔥 {} from database!", ping_db);
+        error!("🔥 {} from database!", ping_db);
         std::process::exit(1);
     }
 
@@ -58,16 +59,18 @@ pub async fn run() -> Result<()> {
 
     let shared_state = Arc::new(app_state);
 
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .init();
+    
 
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
         .await
-        .unwrap();
+        .or_else(|error| {
+            Err(errors::Error::TcpErrorConnection(error.to_string()))
+        })?;
     axum::serve(listener, build_routes(shared_state))
         .await
-        .unwrap();
+        .or_else(|error| {
+            Err(errors::Error::TcpErrorConnection(error.to_string()))
+        })?;
 
     
     Ok(())
