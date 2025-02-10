@@ -7,7 +7,7 @@ use redis::Client;
 use repository::user::user_repository::UserRepository;
 use service::user::user_service::UserService;
 use state::axum::AppState;
-use tracing::{info,error};
+use tracing::{error, info};
 
 use super::axum_routes::build_routes;
 
@@ -49,29 +49,19 @@ pub async fn run() -> Result<()> {
 
     let user_repository = UserRepository { db: conn.clone() };
     let user_service = UserService {
-        user_repo: user_repository
+        user_repo: user_repository,
     };
 
-    let app_state = AppState {
-        user_service,
-    };
-
+    let app_state = AppState { user_service };
 
     let shared_state = Arc::new(app_state);
 
-    
-
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
         .await
-        .or_else(|error| {
-            Err(errors::Error::TcpErrorConnection(error.to_string()))
-        })?;
+        .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
     axum::serve(listener, build_routes(shared_state))
         .await
-        .or_else(|error| {
-            Err(errors::Error::TcpErrorConnection(error.to_string()))
-        })?;
+        .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
 
-    
     Ok(())
 }

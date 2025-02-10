@@ -1,15 +1,14 @@
 use app::router::engine::{Cmd, EngineType};
 use environment::Environment;
 use errors::{Error, Result};
-use tracing::{debug, info}; // Assume Error is a custom error type
+use tracing::info; // Assume Error is a custom error type
 
 #[tokio::main]
 async fn main() -> Result<()> {
-
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();
-    
+
     let env = Environment::new();
     let app_engine = env.app_engine;
 
@@ -21,6 +20,5 @@ async fn main() -> Result<()> {
     info!("app starting...");
     engine.run().await?;
 
-    
     Ok(())
 }

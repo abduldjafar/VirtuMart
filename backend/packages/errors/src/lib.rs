@@ -26,7 +26,7 @@ pub enum Error {
     CloudAuthError(String),
     InvalidUserRole(String),
     UnsupportedEngine(String),
-    TcpErrorConnection(String)
+    TcpErrorConnection(String),
 }
 
 impl core::fmt::Display for Error {
@@ -126,7 +126,9 @@ impl IntoResponse for Error {
             }
             Error::InvalidUserRole(message) => (StatusCode::FORBIDDEN, message.to_string()),
             Error::UnsupportedEngine(message) => (StatusCode::NOT_ACCEPTABLE, message.to_string()),
-            Error::TcpErrorConnection(message) => (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
+            Error::TcpErrorConnection(message) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
+            }
         };
 
         let body = Body::from(
