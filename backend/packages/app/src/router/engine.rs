@@ -4,7 +4,6 @@ use errors::Result;
 
 pub enum EngineType {
     Axum,
-    // Add other engine types here, e.g., Actix
 }
 
 #[async_trait]
