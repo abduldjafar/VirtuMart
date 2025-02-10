@@ -8,3 +8,4 @@ chrono = "0.4.39"
 serde = "1.0"
 serde_derive = "1.0"
 surrealdb = "2.1.4"
+axum = {version = "0.7.5",features = ["multipart"] }

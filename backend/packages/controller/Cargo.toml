@@ -1,0 +1,18 @@
+[package]
+name = "controller"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+environment = { path = "../environment" }
+errors = { path = "../errors" }
+database = { path = "../database" }
+repository = { path = "../repository" }
+service = { path = "../service" }
+state = { path = "../state" }
+model = { path = "../model" }
+
+axum = {version = "0.7.5",features = ["multipart"] }
+serde = { version = "1.0.202", features = ["derive"] }
+serde_json = "1.0.117"
+axum-extra = { version = "0.9.0", features = ["cookie"] }

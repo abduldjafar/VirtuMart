@@ -60,6 +60,7 @@ mod tests {
             password: "test".to_string(),
             role: "buyer".to_string(),
             email: "test@email.test".to_string(),
+            verified: false,
             created_at: Utc::now(),
             updated_at: Utc::now(),
         };

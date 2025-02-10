@@ -11,6 +11,9 @@ model = { path = "packages/model" }
 database = { path = "packages/database" }
 repository = { path = "packages/repository" }
 service = { path = "packages/service" }
+controller = { path = "packages/controller" }
+state = { path = "packages/state" }
+app = { path = "packages/app" }
 
 
 [workspace]
@@ -20,6 +23,9 @@ members = [
     "packages/model",
     "packages/database",
     "packages/repository",
-    "packages/service"
+    "packages/service",
+    "packages/controller",
+    "packages/state",
+    "packages/app",
 
 ]
