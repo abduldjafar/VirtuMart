@@ -14,7 +14,7 @@ show_usage:
 	@echo "Options:"
 	@echo "  full       - Run formatting, Clippy tests, and the project."
 	@echo "  test       - Run formatting and Clippy tests only."
-	@echo "  dev        - Run the project in development mode (cargo run)."
+	@echo "  run_dev        - Run the project in development mode (cargo run)."
 	@echo "  prod       - Build and run the binary in production mode."
 	@echo "  launch     - Run all checks and execute the project."
 	@echo "  deployment - Run checks only, skip Rust code execution."

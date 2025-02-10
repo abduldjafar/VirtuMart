@@ -37,8 +37,9 @@ services:
     networks:
       - virtumart-network
     restart: always
+    command: [ "redis-server", "--requirepass", "toor" ]
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "toor", "ping"]
       interval: 30s
       retries: 3
       start_period: 10s
