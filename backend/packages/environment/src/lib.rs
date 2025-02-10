@@ -25,6 +25,7 @@ pub struct Environment {
     pub storage_bucket: String,
     pub gcp_storage_api: String,
     pub app_port: String,
+    pub app_engine: String,
 }
 
 impl Environment {
@@ -61,6 +62,7 @@ impl Environment {
         let storage_bucket = env::var("STORAGE_BUCKET").unwrap_or(String::from("none"));
         let gcp_storage_api = env::var("GOOGLE_STORAGE_API_HOST").unwrap_or(String::from("none"));
         let app_port = env::var("APP_PORT").unwrap_or(String::from("none"));
+        let app_engine = env::var("APP_ENGINE").unwrap_or(String::from("none"));
 
         Environment {
             db_host,
@@ -85,6 +87,7 @@ impl Environment {
             storage_bucket,
             gcp_storage_api,
             app_port,
+            app_engine,
         }
     }
 }

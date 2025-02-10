@@ -25,6 +25,7 @@ pub enum Error {
     UploadProcessingError(String),
     CloudAuthError(String),
     InvalidUserRole(String),
+    UnsupportedEngine(String)
 }
 
 impl core::fmt::Display for Error {
@@ -123,6 +124,7 @@ impl IntoResponse for Error {
                 (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
             }
             Error::InvalidUserRole(message) => (StatusCode::FORBIDDEN, message.to_string()),
+            Error::UnsupportedEngine(message) => (StatusCode::NOT_ACCEPTABLE, message.to_string()),
         };
 
         let body = Body::from(

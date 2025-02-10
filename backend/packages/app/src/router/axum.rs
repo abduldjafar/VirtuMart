@@ -1,4 +1,3 @@
-
 use errors::Result;
 
 pub async fn run() -> Result<()> {
