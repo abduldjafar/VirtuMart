@@ -9,7 +9,6 @@ async fn main() -> Result<()> {
 
     let engine = match app_engine.as_str() {
         "axum" => EngineType::Axum,
-        // Add other engine types here, e.g., Actix
         _ => return Err(Error::UnsupportedEngine(app_engine)), // Proper error handling
     };
 
