@@ -1,15 +1,27 @@
-use std::sync::Arc;
-
-use axum::{routing::post, Router};
+use axum::{
+    middleware,
+    routing::{get, post},
+    Router,
+};
 use state::axum::AppState;
+use std::sync::Arc;
 use tower_http::trace::TraceLayer;
 
+/// Defines user-related routes.
 pub fn user_routes(app_state: Arc<AppState>) -> Router {
     Router::new()
-        .route("/api/v1/gym", post(controller::axum::user::register))
+        .route("/api/v1/user", post(controller::axum::user::register))
+        .route(
+            "/api/v1/user",
+            get(controller::axum::user::register).route_layer(middleware::from_fn_with_state(
+                app_state.clone(),
+                controller::axum::jwt::auth,
+            )),
+        )
         .with_state(app_state)
 }
 
+/// Builds the complete application router with tracing enabled.
 pub fn build_routes(app_state: Arc<AppState>) -> Router {
     Router::new()
         .merge(user_routes(app_state.clone()))

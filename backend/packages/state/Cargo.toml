@@ -6,3 +6,5 @@ edition = "2021"
 
 [dependencies]
 service = { path = "../service" }
+
+redis = { version = "0.27.4", features = ["tokio-comp"] }

@@ -26,7 +26,7 @@ pub async fn run() -> Result<()> {
         environment.redis_port
     );
 
-    let _redis_client = match Client::open(redis_url) {
+    let redis_client = match Client::open(redis_url) {
         Ok(client) => {
             info!("✅ Connection to Redis is successful!");
             client
@@ -52,7 +52,10 @@ pub async fn run() -> Result<()> {
         user_repo: user_repository,
     };
 
-    let app_state = AppState { user_service };
+    let app_state = AppState {
+        user_service,
+        redis_client,
+    };
 
     let shared_state = Arc::new(app_state);
 
