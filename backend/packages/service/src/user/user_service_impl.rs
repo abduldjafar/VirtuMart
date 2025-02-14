@@ -3,7 +3,7 @@ use argon2::password_hash::rand_core::OsRng;
 use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
 use async_trait::async_trait;
 use chrono::Utc;
-use errors::Error::DataExist;
+use errors::Error::{DataExist, DataNotAvaliable};
 use errors::Result;
 use model::domain::user::User as UserData;
 use model::web::user_request::User;
@@ -66,6 +66,12 @@ impl UserServiceTrait for UserService {
     }
 
     async fn update_profile(&self, id: &str, data: Value) -> Result<bool> {
+        let is_empty_by_user_id = self.user_repo.is_data_empty_by_username(id).await?;
+
+        if is_empty_by_user_id {
+            return Err(DataNotAvaliable(format!("id:{}", id)));
+        }
+
         self.user_repo.update_data(id, data).await
     }
 }
