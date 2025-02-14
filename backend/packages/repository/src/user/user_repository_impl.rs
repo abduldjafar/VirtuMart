@@ -48,4 +48,14 @@ impl UserRepository {
 
         Ok(data.is_empty())
     }
+
+    pub async fn is_data_empty_by_id(&self, id: &str) -> Result<bool> {
+        let db = &self.db;
+
+        let data: Vec<Value> = db
+            .select_where("user", &format!("id = {} ", id), "id")
+            .await?;
+
+        Ok(data.is_empty())
+    }
 }

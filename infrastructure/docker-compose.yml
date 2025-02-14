@@ -73,7 +73,7 @@ services:
     image: surrealdb/surrealdb:latest
     container_name: virtumart-surrealdb
     ports:
-      - '8000:8000'
+      - '8070:8000'
     volumes:
       - ./mydata:/mydata
     command:

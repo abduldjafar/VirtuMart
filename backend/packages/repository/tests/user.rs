@@ -97,6 +97,38 @@ mod tests {
         assert_eq!(is_empty, false);
         Ok(())
     }
+
+    #[test]
+    async fn test_is_data_empty_by_id() -> Result<()> {
+        let user_repo = setup_user_repo().await?;
+        setup_direct_db()
+            .await?
+            .query(
+                r#"
+            -- Create a new record with a numeric id
+            CREATE user:user_123478 CONTENT {
+                username: 'Tobies7',
+                password: 'password',
+                role: 'buyer',
+                email: '',
+                created_at: time::now(),
+                updated_at: time::now()
+            };
+        "#,
+            )
+            .await?;
+
+        let is_empty = user_repo.is_data_empty_by_id("user:user_12348").await?;
+        assert_eq!(is_empty, false);
+
+        setup_direct_db()
+            .await?
+            .query("delete from  user where id = user:user_12348")
+            .await?;
+
+        Ok(())
+    }
+
     #[test]
     async fn test_update_data() -> Result<()> {
         let user_repo = setup_user_repo().await?;
