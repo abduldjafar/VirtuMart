@@ -8,18 +8,27 @@ use service::user::user_service::UserServiceTrait;
 use state::axum::AppState;
 
 use super::jwt::JWTAuthMiddleware;
+use validator::Validate;
 
 pub async fn register(
     State(app_state): State<Arc<AppState>>,
     payload: Json<UserRequest>,
 ) -> Result<impl IntoResponse> {
     let usvc = &app_state.user_service;
-
-    match usvc.register_profile(payload.into()).await {
-        Ok(response) => Ok(Json(json!({
-            "status": "success",
-            "data": response
-        }))),
+    match payload.0.validate() {
+        Ok(()) => match usvc.register_profile(payload.0).await {
+            Ok(response) => Ok(Json(json!({
+                "status": "success",
+                "data": response
+            }))),
+            Err(e) => {
+                let error_message = format!("{:?}", e);
+                Ok(Json(json!({
+                    "status": "error",
+                    "error_message": error_message,
+                })))
+            }
+        },
         Err(e) => {
             let error_message = format!("{:?}", e);
             Ok(Json(json!({

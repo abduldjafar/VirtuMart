@@ -10,6 +10,7 @@ use model::web::user_request::User;
 use model::web::user_response::User as UserResponse;
 use repository::user::user_repository::UserRepositoryTrait as _;
 use serde_json::Value;
+use uuid::Uuid;
 
 impl UserService {
     fn password_hasher(password: &str) -> Result<String> {
@@ -41,9 +42,10 @@ impl UserServiceTrait for UserService {
         let hashed_password = Self::password_hasher(&data.password)?;
         let created_at = Utc::now();
         let updated_at = Utc::now();
+        let user_id = format!("user_{}", Uuid::new_v4());
 
         let db_data = UserData {
-            id: data.id,
+            id: user_id,
             username: data.username,
             email: data.email,
             role: data.role,

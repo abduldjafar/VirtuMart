@@ -55,7 +55,7 @@ mod tests {
     async fn test_insert_data() -> Result<()> {
         let user_repo = setup_user_repo().await?;
         let user = model::domain::user::User {
-            id: "1".to_string(),
+            id: "user:user_12341".to_string(),
             username: "test".to_string(),
             password: "test".to_string(),
             role: "buyer".to_string(),
@@ -65,11 +65,11 @@ mod tests {
             updated_at: Utc::now(),
         };
         let result = user_repo.insert_data(user).await?;
-        assert_eq!(result, "1".to_string());
+        assert_eq!(result, "user:user_12341".to_string());
 
         setup_direct_db()
             .await?
-            .query("delete from  user where id = user:1")
+            .query("delete from  user where id = user:user_12341")
             .await?;
         Ok(())
     }
@@ -118,12 +118,12 @@ mod tests {
             )
             .await?;
 
-        let is_empty = user_repo.is_data_empty_by_id("user:user_12348").await?;
+        let is_empty = user_repo.is_data_empty_by_id("user:user_123478").await?;
         assert_eq!(is_empty, false);
 
         setup_direct_db()
             .await?
-            .query("delete from  user where id = user:user_12348")
+            .query("delete from  user where id = user:user_123478")
             .await?;
 
         Ok(())
@@ -141,7 +141,9 @@ mod tests {
                 username: 'Tobie',
                 password: 'password',
                 role: 'buyer',
-                email: 'asoi@gmail.co'
+                email: 'asoi@gmail.co',
+                created_at: time::now(),
+                updated_at: time::now()
             };
         "#,
             )
@@ -169,7 +171,7 @@ mod tests {
                 .ok_or(DataNotAvaliable(
                     "error extracting password field".to_string()
                 ))?
-                .password,
+                .username,
             "John Doe"
         );
         assert_eq!(

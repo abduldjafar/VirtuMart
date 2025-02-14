@@ -53,7 +53,7 @@ impl UserRepository {
         let db = &self.db;
 
         let data: Vec<Value> = db
-            .select_where("user", &format!("id = {} ", id), "id")
+            .select_where("user", &format!("id = {} ", id), "email")
             .await?;
 
         Ok(data.is_empty())

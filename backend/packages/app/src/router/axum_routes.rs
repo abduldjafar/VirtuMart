@@ -1,6 +1,6 @@
 use axum::{
     middleware,
-    routing::{get, post},
+    routing::{post, put},
     Router,
 };
 use state::axum::AppState;
@@ -13,10 +13,9 @@ pub fn user_routes(app_state: Arc<AppState>) -> Router {
         .route("/api/v1/user", post(controller::axum::user::register))
         .route(
             "/api/v1/user",
-            get(controller::axum::user::register).route_layer(middleware::from_fn_with_state(
-                app_state.clone(),
-                controller::axum::jwt::auth,
-            )),
+            put(controller::axum::user::update_profile).route_layer(
+                middleware::from_fn_with_state(app_state.clone(), controller::axum::jwt::auth),
+            ),
         )
         .with_state(app_state)
 }

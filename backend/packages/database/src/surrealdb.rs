@@ -56,7 +56,7 @@ impl DBInterface for SurrealDb {
             DatabaseErrorExecution("surrealdb: Client connection error".to_string())
         })?;
         let updated_result: Option<model::surreal_db::user::ReturnedUser> =
-            client.update((tb_name, data_id[0])).merge(data).await?;
+            client.update((tb_name, data_id[1])).merge(data).await?;
         Ok(updated_result.is_some())
     }
 
