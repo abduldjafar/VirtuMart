@@ -14,6 +14,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     LoginFail,
     DatabaseErrorExecution(String),
+    DataDuplicationError(String),
     DataExist(String),
     DataNotAvaliable(String),
     TokenError(String),
@@ -127,6 +128,9 @@ impl IntoResponse for Error {
             Error::InvalidUserRole(message) => (StatusCode::FORBIDDEN, message.to_string()),
             Error::UnsupportedEngine(message) => (StatusCode::NOT_ACCEPTABLE, message.to_string()),
             Error::TcpErrorConnection(message) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
+            }
+            Error::DataDuplicationError(message) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
             }
         };

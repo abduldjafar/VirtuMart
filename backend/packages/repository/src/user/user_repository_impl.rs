@@ -1,7 +1,7 @@
 use super::user_repository::{UserRepository, UserRepositoryTrait};
 use async_trait::async_trait;
 use database::interface::DBInterface as _;
-use errors::Error::DataNotAvaliable;
+use errors::Error::{self, DataNotAvaliable};
 use errors::Result;
 use model::domain::user::User;
 use model::surreal_db::user::User as UserSurreal;
@@ -57,5 +57,25 @@ impl UserRepository {
             .await?;
 
         Ok(data.is_empty())
+    }
+
+    pub async fn get_data_by_email(&self, email: &str) -> Result<User> {
+        let db = &self.db;
+
+        let data: Vec<User> = db
+            .select_where("user", &format!("email = '{}'", email), "*")
+            .await?;
+
+        if data.len() > 1 {
+            return Err(Error::DataDuplicationError(
+                "found more than one".to_string(),
+            ));
+        }
+
+        let user = data.first().cloned().ok_or_else(|| {
+            errors::Error::DataNotAvaliable(format!("user with email {} not exists", email))
+        })?;
+
+        Ok(user)
     }
 }

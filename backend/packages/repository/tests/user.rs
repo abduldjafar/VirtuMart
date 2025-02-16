@@ -55,7 +55,7 @@ mod tests {
     async fn test_insert_data() -> Result<()> {
         let user_repo = setup_user_repo().await?;
         let user = model::domain::user::User {
-            id: "user:user_12341".to_string(),
+            id: "user_12341".to_string(),
             username: "test".to_string(),
             password: "test".to_string(),
             role: "buyer".to_string(),
@@ -65,7 +65,7 @@ mod tests {
             updated_at: Utc::now(),
         };
         let result = user_repo.insert_data(user).await?;
-        assert_eq!(result, "user:user_12341".to_string());
+        assert_eq!(result, "user_12341".to_string());
 
         setup_direct_db()
             .await?
@@ -124,6 +124,41 @@ mod tests {
         setup_direct_db()
             .await?
             .query("delete from  user where id = user:user_123478")
+            .await?;
+
+        Ok(())
+    }
+
+    #[test]
+    async fn test_get_data_by_email() -> Result<()> {
+        let user_repo = setup_user_repo().await?;
+        setup_direct_db()
+            .await?
+            .query(
+                r#"
+            -- Create a new record with a numeric id
+            CREATE user:user_asoi CONTENT {
+                username: 'Tobies7',
+                password: 'password',
+                role: 'buyer',
+                email: 'kotekaman@gmail.com',
+                verified: false,
+                created_at: time::now(),
+                updated_at: time::now()
+            };
+        "#,
+            )
+            .await?;
+
+        let test_1 = user_repo.get_data_by_email("kotekaman@gmail.com").await?;
+        assert_eq!(test_1.email, "kotekaman@gmail.com");
+
+        let test_2 = user_repo.get_data_by_email("kotekaman@gmails.com").await;
+        assert!(test_2.is_err());
+
+        setup_direct_db()
+            .await?
+            .query("delete from  user where id = user:user_asoi")
             .await?;
 
         Ok(())

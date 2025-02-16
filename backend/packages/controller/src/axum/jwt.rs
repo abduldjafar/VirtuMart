@@ -23,7 +23,7 @@ pub struct JWTAuthMiddleware {
     pub user_id: String,
 }
 
-pub async fn auth(
+pub async fn jwt_auth(
     cookie_jar: CookieJar,
     State(data): State<Arc<AppState>>,
     mut req: Request<Body>,

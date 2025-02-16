@@ -20,6 +20,31 @@ impl UserService {
             .to_string();
         Ok(hashed_password)
     }
+
+    pub async fn login(&self, email: String) -> Result<UserResponse> {
+        let repo = &self.user_repo;
+
+        let is_empty = repo.is_data_empty_by_email(&email).await?;
+
+        if is_empty {
+            return Err(errors::Error::DataNotAvaliable(String::from(
+                "User not found",
+            )));
+        }
+
+        let data = repo.get_data_by_email(&email).await?;
+
+        let user_response = UserResponse {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            role: data.role,
+            created_at: data.created_at,
+            updated_at: data.updated_at,
+        };
+
+        Ok(user_response)
+    }
 }
 
 #[async_trait]
@@ -68,7 +93,7 @@ impl UserServiceTrait for UserService {
     }
 
     async fn update_profile(&self, id: &str, data: Value) -> Result<bool> {
-        let is_empty_by_user_id = self.user_repo.is_data_empty_by_username(id).await?;
+        let is_empty_by_user_id = self.user_repo.is_data_empty_by_id(id).await?;
 
         if is_empty_by_user_id {
             return Err(DataNotAvaliable(format!("id:{}", id)));

@@ -14,7 +14,7 @@ pub fn user_routes(app_state: Arc<AppState>) -> Router {
         .route(
             "/api/v1/user",
             put(controller::axum::user::update_profile).route_layer(
-                middleware::from_fn_with_state(app_state.clone(), controller::axum::jwt::auth),
+                middleware::from_fn_with_state(app_state.clone(), controller::axum::jwt::jwt_auth),
             ),
         )
         .with_state(app_state)
