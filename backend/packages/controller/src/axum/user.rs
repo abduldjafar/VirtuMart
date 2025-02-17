@@ -9,7 +9,8 @@ use axum::{
 };
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use errors::Result;
-use model::web::user_request::{User as UserRequest, UserLogin};
+use model::web::{user_request::{User as UserRequest, UserLogin}, web_response::WebResponse};
+use model::utoipa::user::User as UtoipaUser;
 use serde_json::{json, Value};
 use service::{
     auth::jwt::{generate_jwt_token, save_token_data_to_redis},
@@ -20,6 +21,17 @@ use state::axum::AppState;
 use super::jwt::JWTAuthMiddleware;
 use validator::Validate;
 
+
+
+#[utoipa::path(
+    post,
+    path = "/api/v1/user",
+    request_body = UserRequest,
+    responses(
+        (status = 200, description = "User found", body = UtoipaUser),
+        (status = 404, description = "User not found")
+    )
+)]
 pub async fn register(
     State(app_state): State<Arc<AppState>>,
     payload: Json<UserRequest>,

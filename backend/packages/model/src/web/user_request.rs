@@ -1,8 +1,9 @@
 use axum::Json;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use validator::Validate;
 
-#[derive(Serialize, Deserialize, Debug, Validate)]
+#[derive(Serialize, Deserialize, Debug, Validate,ToSchema)]
 pub struct User {
     #[validate(length(min = 5))]
     pub username: String,
@@ -14,7 +15,7 @@ pub struct User {
     pub role: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Validate)]
+#[derive(Serialize, Deserialize, Debug, Validate, ToSchema)]
 pub struct UserLogin {
     #[validate(email)]
     pub email: String,

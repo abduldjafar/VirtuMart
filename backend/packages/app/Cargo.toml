@@ -11,6 +11,7 @@ repository = { path = "../repository" }
 service = { path = "../service" }
 state = { path = "../state" }
 controller = { path = "../controller" }
+model = { path = "../model" }
 
 
 axum = {version = "0.7.5",features = ["multipart"] }
@@ -20,3 +21,8 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing = "0.1.40"
 async-trait = "0.1.80"
 tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
+utoipa-swagger-ui = { version = "9", features = ["axum"] }
+utoipa = { version = "5", features = ["axum_extras"] }
+utoipa-axum = "0.2.0"
+
+

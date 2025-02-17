@@ -4,8 +4,20 @@ use axum::{
     Router,
 };
 use state::axum::AppState;
+use utoipa::OpenApi;
 use std::sync::Arc;
 use tower_http::trace::TraceLayer;
+use model::web::user_request::User as UserRequest;
+use model::utoipa::user::User as UserUtoipa;
+use utoipa_axum::{router::OpenApiRouter, routes};
+
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(controller::axum::user::register),
+    components(schemas(UserUtoipa,UserRequest))
+)]
+struct ApiDoc;
 
 /// Defines user-related routes.
 pub fn user_routes(app_state: Arc<AppState>) -> Router {
