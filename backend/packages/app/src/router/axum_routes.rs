@@ -11,7 +11,6 @@ use std::sync::Arc;
 use tower_http::trace::TraceLayer;
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
-use utoipa_redoc::{Redoc, Servable};
 use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
@@ -53,12 +52,10 @@ pub fn build_routes(app_state: Arc<AppState>) -> Router<Arc<AppState>> {
         .split_for_parts();
 
     let swagger_router = SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone());
-    let redoc_router = Redoc::with_url("/redoc", api.clone());
 
     let router: Router<Arc<AppState>> = router
         .merge(user_routes(app_state.clone())) // Ensure correct type
         .merge(swagger_router)
-        .merge(redoc_router) // Merge directly, no `.into()`
         .layer(TraceLayer::new_for_http())
         .with_state(app_state);
 
