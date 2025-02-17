@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use super::jwt::JWTAuthMiddleware;
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{
     extract::{Path, State},
@@ -16,8 +17,6 @@ use service::{
     user::user_service::UserServiceTrait,
 };
 use state::axum::AppState;
-
-use super::jwt::JWTAuthMiddleware;
 use validator::Validate;
 
 #[utoipa::path(
@@ -26,19 +25,7 @@ use validator::Validate;
     request_body = UserRequest,
     tag = "user",
     responses(
-        (status = 200, description = "User found", content_type = "text/plain", example = r#"
-            {
-                "status": "success",
-                "data": {
-                    "user": {
-                        "email": "string",
-                        "password": "string",
-                        "role": "string",
-                        "username": "string"
-                    }
-                }
-            }
-        "#),
+        (status = 200, description = "User found", content_type = "text/plain", example =  super::data_example::user_registered),
         (status = 404, description = "User not found", content_type = "text/plain")
     ),
 )]
