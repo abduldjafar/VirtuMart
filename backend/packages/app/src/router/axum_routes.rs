@@ -11,6 +11,7 @@ use tower_http::trace::TraceLayer;
 pub fn user_routes(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route("/api/v1/user", post(controller::axum::user::register))
+        .route("/api/v1/login", post(controller::axum::user::login))
         .route(
             "/api/v1/user",
             put(controller::axum::user::update_profile).route_layer(

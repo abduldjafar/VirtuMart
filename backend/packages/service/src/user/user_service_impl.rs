@@ -21,7 +21,7 @@ impl UserService {
         Ok(hashed_password)
     }
 
-    pub async fn login(&self, email: String) -> Result<UserResponse> {
+    pub async fn login(&self, email: String) -> Result<UserData> {
         let repo = &self.user_repo;
 
         let is_empty = repo.is_data_empty_by_email(&email).await?;
@@ -32,16 +32,7 @@ impl UserService {
             )));
         }
 
-        let data = repo.get_data_by_email(&email).await?;
-
-        let user_response = UserResponse {
-            id: data.id,
-            username: data.username,
-            email: data.email,
-            role: data.role,
-            created_at: data.created_at,
-            updated_at: data.updated_at,
-        };
+        let user_response = repo.get_data_by_email(&email).await?;
 
         Ok(user_response)
     }

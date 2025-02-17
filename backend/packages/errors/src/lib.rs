@@ -7,6 +7,7 @@ use redis::RedisError;
 use serde::Serialize;
 use serde_json::json;
 use std::string::FromUtf8Error;
+use validator::ValidationErrors;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -28,6 +29,7 @@ pub enum Error {
     InvalidUserRole(String),
     UnsupportedEngine(String),
     TcpErrorConnection(String),
+    DataNotValidate(String),
 }
 
 impl core::fmt::Display for Error {
@@ -98,6 +100,12 @@ impl From<google_cloud_storage::client::google_cloud_auth::error::Error> for Err
     }
 }
 
+impl From<ValidationErrors> for Error {
+    fn from(error: ValidationErrors) -> Self {
+        Error::DataNotValidate(error.to_string())
+    }
+}
+
 impl IntoResponse for Error {
     fn into_response(self) -> Response<Body> {
         let (status, error_message) = match &self {
@@ -131,6 +139,9 @@ impl IntoResponse for Error {
                 (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
             }
             Error::DataDuplicationError(message) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
+            }
+            Error::DataNotValidate(message) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, message.to_string())
             }
         };

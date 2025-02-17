@@ -14,6 +14,14 @@ pub struct User {
     pub role: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Validate)]
+pub struct UserLogin {
+    #[validate(email)]
+    pub email: String,
+    #[validate(length(min = 8, message = "Password must be at least 8 characters"))]
+    pub password: String,
+}
+
 impl From<Json<User>> for User {
     fn from(payload: Json<User>) -> Self {
         Self {

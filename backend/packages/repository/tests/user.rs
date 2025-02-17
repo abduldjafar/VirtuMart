@@ -86,6 +86,7 @@ mod tests {
                 password: 'password',
                 role: 'buyer',
                 email: '',
+                verified: false,
                 created_at: time::now(),
                 updated_at: time::now()
             };
@@ -111,6 +112,7 @@ mod tests {
                 password: 'password',
                 role: 'buyer',
                 email: '',
+                verified: false,
                 created_at: time::now(),
                 updated_at: time::now()
             };
@@ -177,6 +179,7 @@ mod tests {
                 password: 'password',
                 role: 'buyer',
                 email: 'asoi@gmail.co',
+                verified: false,
                 created_at: time::now(),
                 updated_at: time::now()
             };
