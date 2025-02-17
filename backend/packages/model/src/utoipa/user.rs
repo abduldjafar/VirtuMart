@@ -3,7 +3,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use surrealdb::sql::Thing;
 use utoipa::ToSchema;
 
-#[derive(Serialize, Deserialize, Debug,ToSchema)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct User {
     #[serde(deserialize_with = "thing_to_string")]
     pub id: String,
@@ -28,7 +28,6 @@ where
     let t = Thing::deserialize(deserializer)?;
     Ok(t.to_raw())
 }
-
 
 fn datetime_to_string<'de, D>(deserializer: D) -> Result<String, D::Error>
 where

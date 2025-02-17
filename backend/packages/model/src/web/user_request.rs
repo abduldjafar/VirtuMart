@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use validator::Validate;
 
-#[derive(Serialize, Deserialize, Debug, Validate,ToSchema)]
+#[derive(Serialize, Deserialize, Debug, Validate, ToSchema)]
 pub struct User {
     #[validate(length(min = 5))]
     pub username: String,

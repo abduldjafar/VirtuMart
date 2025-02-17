@@ -21,8 +21,9 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing = "0.1.40"
 async-trait = "0.1.80"
 tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
-utoipa-swagger-ui = { version = "9", features = ["axum"] }
+utoipa-swagger-ui = { version = "8", features = ["axum"] }
+utoipa-redoc = { version = "5", features = ["axum"] }
 utoipa = { version = "5", features = ["axum_extras"] }
-utoipa-axum = "0.2.0"
+utoipa-axum = "0.1.0"
 
 

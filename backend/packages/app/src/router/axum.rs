@@ -62,9 +62,15 @@ pub async fn run() -> Result<()> {
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
         .await
         .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
-    axum::serve(listener, build_routes(shared_state))
-        .await
-        .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
+
+    axum::serve(
+        listener,
+        build_routes(shared_state.clone())
+            .with_state(shared_state)
+            .into_make_service(),
+    )
+    .await
+    .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
 
     Ok(())
 }
