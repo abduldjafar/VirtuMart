@@ -1,9 +1,14 @@
-use async_trait::async_trait;
-use database::database::DatabaseClient;
-use errors::Result;
-use model::domain::user::User;
-use serde_json::Value;
 use std::sync::Arc;
+
+use async_trait::async_trait;
+
+use database::database::DatabaseClient;
+
+use errors::Result;
+
+use model::domain::user::User;
+
+use serde_json::Value;
 
 #[derive(Clone, Debug)]
 pub struct UserRepository {

@@ -1,21 +1,26 @@
+use std::sync::Arc;
+
 use axum::{
     middleware,
     routing::{post, put},
     Router,
 };
-use controller::axum::user::register;
-use model::utoipa::user::User as UserUtoipa;
-use model::web::user_request::User as UserRequest;
-use state::axum::AppState;
-use std::sync::Arc;
 use tower_http::trace::TraceLayer;
+
+use controller::axum::user::register;
+use model::{utoipa::user::User as UserUtoipa, web::user_request::User as UserRequest};
+use state::axum::AppState;
+
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(controller::axum::user::register),
+    paths(
+        controller::axum::user::register,
+        controller::axum::user::update_profile
+    ),
     components(schemas(UserUtoipa, UserRequest))
 )]
 struct ApiDoc;
@@ -25,11 +30,13 @@ pub fn user_routes(app_state: Arc<AppState>) -> Router<Arc<AppState>> {
     Router::new()
         .route("/api/v1/user", post(register))
         .route("/api/v1/login", post(controller::axum::user::login))
-        .route("/api/v1/user", put(controller::axum::user::update_profile))
-        .layer(middleware::from_fn_with_state(
-            app_state.clone(),
-            controller::axum::jwt::jwt_auth,
-        ))
+        .route(
+            "/api/v1/user",
+            put(controller::axum::user::update_profile).layer(middleware::from_fn_with_state(
+                app_state.clone(),
+                controller::axum::jwt::jwt_auth,
+            )),
+        )
         .with_state(app_state)
 }
 

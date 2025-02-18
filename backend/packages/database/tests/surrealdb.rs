@@ -4,13 +4,20 @@ use serde::{Deserialize, Serialize};
 #[cfg(test)]
 mod tests {
     use super::*;
-    use database::database::{DatabaseClient, Sources};
-    use database::interface::DBInterface as _;
+
+    use database::{
+        database::{DatabaseClient, Sources},
+        interface::DBInterface as _,
+    };
     use environment::Environment;
-    use surrealdb::engine::remote::ws::{Client, Ws};
-    use surrealdb::opt::auth::Root;
-    use surrealdb::sql::Thing;
-    use surrealdb::Surreal;
+
+    use surrealdb::{
+        engine::remote::ws::{Client, Ws},
+        opt::auth::Root,
+        sql::Thing,
+        Surreal,
+    };
+
     use tokio::test;
 
     #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]

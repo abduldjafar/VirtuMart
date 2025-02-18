@@ -1,9 +1,11 @@
+use async_trait::async_trait;
+
 use super::interface;
 use crate::database::SurrealDb;
-use async_trait::async_trait;
-use errors::Error::DatabaseErrorExecution;
-use errors::Result;
+
+use errors::{Error::DatabaseErrorExecution, Result};
 use interface::DBInterface;
+
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 /* Implementation of DBInterface for SurrealDb */

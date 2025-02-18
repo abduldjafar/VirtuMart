@@ -1,8 +1,12 @@
 use base64::{engine::general_purpose, Engine};
-use redis::{AsyncCommands, Client};
-use uuid::Uuid;
+
+use errors::Error::DatabaseErrorExecution;
 
 use model::authorization::token::{TokenClaims, TokenDetails};
+
+use redis::{AsyncCommands, Client};
+
+use uuid::Uuid;
 
 use errors::Result;
 
@@ -78,9 +82,7 @@ pub async fn save_token_data_to_redis(
     let mut redis_client = match client.get_multiplexed_async_connection().await {
         Ok(client) => client,
         Err(_) => {
-            return Err(errors::Error::DatabaseErrorExecution(
-                "internal server error".to_string(),
-            ));
+            return Err(DatabaseErrorExecution("internal server error".to_string()));
         }
     };
 
@@ -92,9 +94,8 @@ pub async fn save_token_data_to_redis(
         )
         .await;
 
-    redis_result.map_err(|e| {
-        errors::Error::DatabaseErrorExecution(format!("Failed to store token in Redis: {:?}", e))
-    })?;
+    redis_result
+        .map_err(|e| DatabaseErrorExecution(format!("Failed to store token in Redis: {:?}", e)))?;
 
     Ok(())
 }
@@ -103,9 +104,7 @@ pub async fn delete_token_data_in_redis(client: &Client, token: String) -> Resul
     let mut redis_client = match client.get_multiplexed_async_connection().await {
         Ok(client) => client,
         Err(_) => {
-            return Err(errors::Error::DatabaseErrorExecution(
-                "internal server error".to_string(),
-            ));
+            return Err(DatabaseErrorExecution("internal server error".to_string()));
         }
     };
 
@@ -115,9 +114,8 @@ pub async fn delete_token_data_in_redis(client: &Client, token: String) -> Resul
         )
         .await;
 
-    redis_result.map_err(|e| {
-        errors::Error::DatabaseErrorExecution(format!("Failed to store token in Redis: {:?}", e))
-    })?;
+    redis_result
+        .map_err(|e| DatabaseErrorExecution(format!("Failed to store token in Redis: {:?}", e)))?;
 
     Ok(())
 }

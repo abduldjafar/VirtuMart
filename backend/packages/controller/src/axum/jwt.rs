@@ -7,10 +7,13 @@ use axum::{
     middleware::Next,
     response::IntoResponse,
 };
-
 use axum_extra::extract::cookie::CookieJar;
+
 use environment::Environment;
-use errors::{self, Result};
+use errors::{
+    Error::{DatabaseErrorExecution, TokenError},
+    Result,
+};
 use redis::AsyncCommands;
 use serde::{Deserialize, Serialize};
 use state::axum::AppState;
@@ -48,7 +51,7 @@ pub async fn jwt_auth(
     let access_token = match option_access_token {
         Some(token) => token,
         None => {
-            return Err(errors::Error::TokenError(
+            return Err(TokenError(
                 "You are not logged in, please provide token".to_string(),
             ))
         }
@@ -63,25 +66,20 @@ pub async fn jwt_auth(
     .await
     {
         Ok(token_details) => token_details,
-        Err(e) => return Err(errors::Error::TokenError(format!("fail: {}", e))),
+        Err(e) => return Err(TokenError(format!("fail: {}", e))),
     };
 
     // Parse UUID from token details
     let access_token_uuid =
         match uuid::Uuid::parse_str(&access_token_details.token_uuid.to_string()) {
             Ok(token) => token,
-            Err(_) => return Err(errors::Error::TokenError("fail: Invalid token".to_string())),
+            Err(_) => return Err(TokenError("fail: Invalid token".to_string())),
         };
 
     // Connect to Redis and retrieve user ID associated with the token UUID
     let mut redis_client = match data.redis_client.get_multiplexed_async_connection().await {
         Ok(client) => client,
-        Err(error) => {
-            return Err(errors::Error::DatabaseErrorExecution(format!(
-                "Redis error: {}",
-                error
-            )))
-        }
+        Err(error) => return Err(DatabaseErrorExecution(format!("Redis error: {}", error))),
     };
 
     // Retrieve user ID from Redis based on access token UUID
@@ -91,7 +89,7 @@ pub async fn jwt_auth(
     {
         Ok(token) => token,
         Err(_) => {
-            return Err(errors::Error::TokenError(
+            return Err(TokenError(
                 "fail: Token is invalid or session has expired".to_string(),
             ))
         }

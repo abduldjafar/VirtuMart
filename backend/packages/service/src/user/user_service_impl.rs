@@ -1,16 +1,27 @@
-use super::user_service::{UserService, UserServiceTrait};
-use argon2::password_hash::rand_core::OsRng;
-use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
 use async_trait::async_trait;
 use chrono::Utc;
-use errors::Error::{DataExist, DataNotAvaliable};
-use errors::Result;
-use model::domain::user::User as UserData;
-use model::web::user_request::User;
-use model::web::user_response::User as UserResponse;
-use repository::user::user_repository::UserRepositoryTrait as _;
-use serde_json::Value;
 use uuid::Uuid;
+
+use argon2::{
+    password_hash::{rand_core::OsRng, SaltString},
+    Argon2, PasswordHasher,
+};
+
+use errors::{
+    Error::{DataExist, DataNotAvaliable, UserNotVerified},
+    Result,
+};
+
+use model::{
+    domain::user::User as UserData, web::user_request::User,
+    web::user_response::User as UserResponse,
+};
+
+use repository::user::user_repository::UserRepositoryTrait as _;
+
+use serde_json::Value;
+
+use super::user_service::{UserService, UserServiceTrait};
 
 impl UserService {
     fn password_hasher(password: &str) -> Result<String> {
@@ -27,12 +38,14 @@ impl UserService {
         let is_empty = repo.is_data_empty_by_email(&email).await?;
 
         if is_empty {
-            return Err(errors::Error::DataNotAvaliable(String::from(
-                "User not found",
-            )));
+            return Err(DataNotAvaliable(String::from("User not found")));
         }
 
         let user_response = repo.get_data_by_email(&email).await?;
+
+        if !user_response.verified {
+            return Err(UserNotVerified("User not verified".to_string()));
+        }
 
         Ok(user_response)
     }
@@ -40,6 +53,7 @@ impl UserService {
 
 #[async_trait]
 impl UserServiceTrait for UserService {
+    #[tracing::instrument(err, skip_all)]
     async fn register_profile(&self, data: User) -> Result<UserResponse> {
         let is_empty_by_username = self
             .user_repo
@@ -58,7 +72,7 @@ impl UserServiceTrait for UserService {
         let hashed_password = Self::password_hasher(&data.password)?;
         let created_at = Utc::now();
         let updated_at = Utc::now();
-        let user_id = format!("user_{}", Uuid::new_v4());
+        let user_id = format!("user_{}", Uuid::new_v4().to_string().replace("-", "_"));
 
         let db_data = UserData {
             id: user_id,
@@ -83,11 +97,18 @@ impl UserServiceTrait for UserService {
         })
     }
 
+    #[tracing::instrument(err, skip_all)]
     async fn update_profile(&self, id: &str, data: Value) -> Result<bool> {
         let is_empty_by_user_id = self.user_repo.is_data_empty_by_id(id).await?;
 
         if is_empty_by_user_id {
             return Err(DataNotAvaliable(format!("id:{}", id)));
+        }
+
+        let is_verified = self.user_repo.is_verified(id).await?;
+
+        if !is_verified {
+            return Err(UserNotVerified("User not verified".to_string()));
         }
 
         self.user_repo.update_data(id, data).await

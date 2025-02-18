@@ -2,11 +2,13 @@ use std::sync::Arc;
 
 use database::database::{Connection, Sources};
 use environment::Environment;
-use errors::Result;
+use errors::{Error::TcpErrorConnection, Result};
+
 use redis::Client;
 use repository::user::user_repository::UserRepository;
 use service::user::user_service::UserService;
 use state::axum::AppState;
+
 use tracing::{error, info};
 
 use super::axum_routes::build_routes;
@@ -61,7 +63,7 @@ pub async fn run() -> Result<()> {
 
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", &environment.app_port))
         .await
-        .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
+        .map_err(|error| TcpErrorConnection(error.to_string()))?;
 
     axum::serve(
         listener,
@@ -70,7 +72,7 @@ pub async fn run() -> Result<()> {
             .into_make_service(),
     )
     .await
-    .map_err(|error| errors::Error::TcpErrorConnection(error.to_string()))?;
+    .map_err(|error| TcpErrorConnection(error.to_string()))?;
 
     Ok(())
 }

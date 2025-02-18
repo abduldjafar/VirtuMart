@@ -1,12 +1,15 @@
+use std::string::FromUtf8Error;
+
 use axum::{
     body::Body,
     http::{Response, StatusCode},
     response::IntoResponse,
 };
+
 use redis::RedisError;
 use serde::Serialize;
 use serde_json::json;
-use std::string::FromUtf8Error;
+use tracing::error as log_error;
 use validator::ValidationErrors;
 
 pub type Result<T> = core::result::Result<T, Error>;
@@ -42,66 +45,77 @@ impl std::error::Error for Error {}
 
 impl From<surrealdb::Error> for Error {
     fn from(error: surrealdb::Error) -> Self {
+        log_error!("{}", error);
         Error::DatabaseErrorExecution(error.to_string())
     }
 }
 
 impl From<jsonwebtoken::errors::Error> for Error {
     fn from(error: jsonwebtoken::errors::Error) -> Self {
+        log_error!("{}", error);
         Error::TokenError(error.to_string())
     }
 }
 
 impl From<base64::DecodeError> for Error {
     fn from(error: base64::DecodeError) -> Self {
+        log_error!("{}", error);
         Error::DecodeError(error.to_string())
     }
 }
 
 impl From<FromUtf8Error> for Error {
     fn from(error: FromUtf8Error) -> Self {
+        log_error!("{}", error);
         Error::StringError(error.to_string())
     }
 }
 
 impl From<RedisError> for Error {
     fn from(error: RedisError) -> Self {
+        log_error!("{}", error);
         Error::DatabaseErrorExecution(error.to_string())
     }
 }
 
 impl From<uuid::Error> for Error {
     fn from(error: uuid::Error) -> Self {
+        log_error!("{}", error);
         Error::StringError(error.to_string())
     }
 }
 
 impl From<argon2::password_hash::Error> for Error {
     fn from(error: argon2::password_hash::Error) -> Self {
+        log_error!("{}", error);
         Error::DatabaseErrorExecution(error.to_string())
     }
 }
 
 impl From<lettre::transport::smtp::Error> for Error {
     fn from(error: lettre::transport::smtp::Error) -> Self {
+        log_error!("{}", error);
         Error::SmtpProcessingError(error.to_string())
     }
 }
 
 impl From<google_cloud_storage::http::Error> for Error {
     fn from(error: google_cloud_storage::http::Error) -> Self {
+        log_error!("{}", error);
         Error::UploadProcessingError(error.to_string())
     }
 }
 
 impl From<google_cloud_storage::client::google_cloud_auth::error::Error> for Error {
     fn from(error: google_cloud_storage::client::google_cloud_auth::error::Error) -> Self {
+        log_error!("{}", error);
         Error::CloudAuthError(error.to_string())
     }
 }
 
 impl From<ValidationErrors> for Error {
     fn from(error: ValidationErrors) -> Self {
+        log_error!("{}", error);
         Error::DataNotValidate(error.to_string())
     }
 }

@@ -1,8 +1,9 @@
 /* Define the SurrealDb struct */
-
 use async_trait::async_trait;
+
 use environment::Environment;
 use errors::Result;
+
 use surrealdb::{
     engine::remote::ws::{Client, Ws},
     opt::auth::Root,

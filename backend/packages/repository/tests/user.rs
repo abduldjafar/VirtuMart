@@ -3,15 +3,23 @@ mod tests {
     use std::sync::Arc;
 
     use chrono::Utc;
+
     use database::database::{DatabaseClient, SurrealDb};
+
     use environment::Environment;
-    use errors::Error::DataNotAvaliable;
-    use errors::Result;
+
+    use errors::{Error::DataNotAvaliable, Result};
+
     use repository::user::user_repository::{UserRepository, UserRepositoryTrait};
+
     use serde::{Deserialize, Serialize};
-    use surrealdb::engine::remote::ws::{Client, Ws};
-    use surrealdb::opt::auth::Root;
-    use surrealdb::Surreal;
+
+    use surrealdb::{
+        engine::remote::ws::{Client, Ws},
+        opt::auth::Root,
+        Surreal,
+    };
+
     use tokio::test;
 
     #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -161,6 +169,38 @@ mod tests {
         setup_direct_db()
             .await?
             .query("delete from  user where id = user:user_asoi")
+            .await?;
+
+        Ok(())
+    }
+
+    #[test]
+    async fn test_is_user_verified() -> Result<()> {
+        let user_repo = setup_user_repo().await?;
+        setup_direct_db()
+            .await?
+            .query(
+                r#"
+            -- Create a new record with a numeric id
+            CREATE user:user_asoi1 CONTENT {
+                username: 'Tobies7',
+                password: 'password',
+                role: 'buyer',
+                email: 'kotekaman@gmail.com',
+                verified: true,
+                created_at: time::now(),
+                updated_at: time::now()
+            };
+        "#,
+            )
+            .await?;
+
+        let test_1 = user_repo.is_verified("user:user_asoi1").await?;
+        assert_eq!(test_1, true);
+
+        setup_direct_db()
+            .await?
+            .query("delete from  user where id = user:user_asoi1")
             .await?;
 
         Ok(())

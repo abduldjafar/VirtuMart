@@ -1,10 +1,15 @@
-use super::user_repository::{UserRepository, UserRepositoryTrait};
 use async_trait::async_trait;
+
+use super::user_repository::{UserRepository, UserRepositoryTrait};
 use database::interface::DBInterface as _;
-use errors::Error::{self, DataNotAvaliable};
-use errors::Result;
-use model::domain::user::User;
-use model::surreal_db::user::User as UserSurreal;
+
+use errors::{
+    Error::{self, DataNotAvaliable},
+    Result,
+};
+
+use model::{domain::user::User, surreal_db::user::User as UserSurreal};
+
 use serde_json::Value;
 
 #[async_trait]
@@ -59,6 +64,30 @@ impl UserRepository {
         Ok(data.is_empty())
     }
 
+    pub async fn is_verified(&self, id: &str) -> Result<bool> {
+        let db = &self.db;
+        let is_id_empty = self.is_data_empty_by_id(id).await?;
+
+        if is_id_empty {
+            return Err(DataNotAvaliable(format!("id:{}", id)));
+        }
+
+        let data: Vec<User> = db
+            .select_where("user", &format!("id = {} ", id), "*")
+            .await?;
+
+        let user = data
+            .first()
+            .cloned()
+            .ok_or_else(|| DataNotAvaliable(format!("user with id {} not exists", id)))?;
+
+        if user.verified {
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
     pub async fn get_data_by_email(&self, email: &str) -> Result<User> {
         let db = &self.db;
 
@@ -72,9 +101,10 @@ impl UserRepository {
             ));
         }
 
-        let user = data.first().cloned().ok_or_else(|| {
-            errors::Error::DataNotAvaliable(format!("user with email {} not exists", email))
-        })?;
+        let user = data
+            .first()
+            .cloned()
+            .ok_or_else(|| DataNotAvaliable(format!("user with email {} not exists", email)))?;
 
         Ok(user)
     }
