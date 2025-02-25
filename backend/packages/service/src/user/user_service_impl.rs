@@ -24,6 +24,7 @@ use serde_json::Value;
 use super::user_service::{UserService, UserServiceTrait};
 
 impl UserService {
+    #[tracing::instrument(err, skip_all)]
     fn password_hasher(password: &str) -> Result<String> {
         let salt = SaltString::generate(&mut OsRng);
         let hashed_password = Argon2::default()
@@ -32,19 +33,19 @@ impl UserService {
         Ok(hashed_password)
     }
 
+    #[tracing::instrument(err, skip_all)]
     pub async fn login(&self, email: String) -> Result<UserData> {
         let repo = &self.user_repo;
 
-        let is_empty = repo.is_data_empty_by_email(&email).await?;
-
-        if is_empty {
-            return Err(DataNotAvaliable(String::from("User not found")));
-        }
+        repo.is_data_empty_by_email(&email).await?;
 
         let user_response = repo.get_data_by_email(&email).await?;
 
         if !user_response.verified {
-            return Err(UserNotVerified("User not verified".to_string()));
+            return Err(UserNotVerified(format!(
+                "user with emai {} not verified",
+                email
+            )));
         }
 
         Ok(user_response)

@@ -132,7 +132,7 @@ impl IntoResponse for Error {
                 StatusCode::NOT_ACCEPTABLE,
                 format!("{} already registered", id),
             ),
-            Error::DataNotAvaliable(id) => (StatusCode::NOT_FOUND, format!("{} Not Available", id)),
+            Error::DataNotAvaliable(message) => (StatusCode::NOT_FOUND, message.to_string()),
             Error::TokenError(message) => (StatusCode::UNAUTHORIZED, message.to_string()),
             Error::DecodeError(message) => (StatusCode::FORBIDDEN, message.to_string()),
             Error::StringError(message) => (StatusCode::FORBIDDEN, message.to_string()),

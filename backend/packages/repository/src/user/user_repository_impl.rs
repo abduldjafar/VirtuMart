@@ -11,9 +11,11 @@ use errors::{
 use model::{domain::user::User, surreal_db::user::User as UserSurreal};
 
 use serde_json::Value;
+use tracing;
 
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
+    #[tracing::instrument(err, skip_all)]
     async fn insert_data(&self, data: User) -> Result<String> {
         let result: Option<UserSurreal> = self.db.insert_record("user", data).await?;
         let id = result
@@ -27,6 +29,7 @@ impl UserRepositoryTrait for UserRepository {
         Ok(id)
     }
 
+    #[tracing::instrument(err, skip_all)]
     async fn update_data(&self, id: &str, data: Value) -> Result<bool> {
         let result: bool = self.db.update_record(id, "user", data).await?;
         Ok(result)
@@ -34,6 +37,7 @@ impl UserRepositoryTrait for UserRepository {
 }
 
 impl UserRepository {
+    #[tracing::instrument(err, skip_all)]
     pub async fn is_data_empty_by_username(&self, username: &str) -> Result<bool> {
         let db = &self.db;
 
@@ -44,6 +48,7 @@ impl UserRepository {
         Ok(data.is_empty())
     }
 
+    #[tracing::instrument(err, skip_all)]
     pub async fn is_data_empty_by_email(&self, email: &str) -> Result<bool> {
         let db = &self.db;
 
@@ -54,6 +59,7 @@ impl UserRepository {
         Ok(data.is_empty())
     }
 
+    #[tracing::instrument(err, skip_all)]
     pub async fn is_data_empty_by_id(&self, id: &str) -> Result<bool> {
         let db = &self.db;
 
@@ -64,6 +70,7 @@ impl UserRepository {
         Ok(data.is_empty())
     }
 
+    #[tracing::instrument(err, skip_all)]
     pub async fn is_verified(&self, id: &str) -> Result<bool> {
         let db = &self.db;
         let is_id_empty = self.is_data_empty_by_id(id).await?;
@@ -88,6 +95,7 @@ impl UserRepository {
         }
     }
 
+    #[tracing::instrument(err, skip_all)]
     pub async fn get_data_by_email(&self, email: &str) -> Result<User> {
         let db = &self.db;
 
@@ -101,10 +109,10 @@ impl UserRepository {
             ));
         }
 
-        let user = data
-            .first()
-            .cloned()
-            .ok_or_else(|| DataNotAvaliable(format!("user with email {} not exists", email)))?;
+        let user = data.first().cloned().ok_or_else(|| {
+            let error_message = format!("user with email {} not exists", email);
+            DataNotAvaliable(error_message)
+        })?;
 
         Ok(user)
     }

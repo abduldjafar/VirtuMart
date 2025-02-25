@@ -78,10 +78,9 @@ pub async fn update_profile(
     })))
 }
 
-
 #[utoipa::path(
     post,
-    path = "/api/v1/user/login",
+    path = "/api/v1/login",
     request_body = UserLogin,
     tag = "user",
     responses(
@@ -102,7 +101,7 @@ pub async fn login(
     let is_valid = match PasswordHash::new(&user.password) {
         Ok(parsed_hash) => Argon2::default()
             .verify_password(body.password.as_bytes(), &parsed_hash)
-            .map_or(false, |_| true),
+            .is_ok_and(|_| true),
         Err(_) => false,
     };
 

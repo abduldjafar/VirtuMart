@@ -26,6 +26,7 @@ pub struct JWTAuthMiddleware {
     pub user_id: String,
 }
 
+#[tracing::instrument(err, skip_all)]
 pub async fn jwt_auth(
     cookie_jar: CookieJar,
     State(data): State<Arc<AppState>>,
