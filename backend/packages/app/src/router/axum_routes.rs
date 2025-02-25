@@ -8,7 +8,8 @@ use axum::{
 use tower_http::trace::TraceLayer;
 
 use controller::axum::user::register;
-use model::{utoipa::user::User as UserUtoipa, web::user_request::User as UserRequest};
+use controller::axum::user::login;
+use model::{utoipa::user::User as UserUtoipa, web::user_request::{User as UserRequest, UserLogin}};
 use state::axum::AppState;
 
 use utoipa::OpenApi;
@@ -19,9 +20,10 @@ use utoipa_swagger_ui::SwaggerUi;
 #[openapi(
     paths(
         controller::axum::user::register,
-        controller::axum::user::update_profile
+        controller::axum::user::update_profile,
+        controller::axum::user::login,
     ),
-    components(schemas(UserUtoipa, UserRequest))
+    components(schemas(UserUtoipa, UserRequest,UserLogin))
 )]
 struct ApiDoc;
 
@@ -29,7 +31,7 @@ struct ApiDoc;
 pub fn user_routes(app_state: Arc<AppState>) -> Router<Arc<AppState>> {
     Router::new()
         .route("/api/v1/user", post(register))
-        .route("/api/v1/login", post(controller::axum::user::login))
+        .route("/api/v1/login", post(login))
         .route(
             "/api/v1/user",
             put(controller::axum::user::update_profile).layer(middleware::from_fn_with_state(

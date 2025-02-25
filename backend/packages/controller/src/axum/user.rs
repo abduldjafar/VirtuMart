@@ -78,6 +78,18 @@ pub async fn update_profile(
     })))
 }
 
+
+#[utoipa::path(
+    post,
+    path = "/api/v1/user/login",
+    request_body = UserLogin,
+    tag = "user",
+    responses(
+        (status = 200, description = "User found", content_type = "text/plain", example =  super::data_example::user_registered),
+        (status = 404, description = "User not found", content_type = "text/plain")
+    ),
+    description = "Update user information. You can update all fields or select specific fields."
+)]
 pub async fn login(
     State(app_state): State<Arc<AppState>>,
     Json(body): Json<UserLogin>,
