@@ -15,13 +15,14 @@ pub struct User {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserResponseUsername {
-    username: String,
+    pub username: String,
 }
 
+/// Converts a `Thing` from SurrealDB into a raw string representation.
 fn thing_to_string<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let t = Thing::deserialize(deserializer)?;
-    Ok(t.to_raw())
+    let thing = Thing::deserialize(deserializer)?;
+    Ok(thing.to_raw())
 }

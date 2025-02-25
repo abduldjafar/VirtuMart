@@ -44,7 +44,7 @@ pub fn user_routes(app_state: Arc<AppState>) -> Router<Arc<AppState>> {
         .with_state(app_state)
 }
 
-/// Get health of the API.
+/// API health check endpoint.
 #[utoipa::path(
     method(get, head),
     path = "/api/health",
@@ -56,7 +56,7 @@ async fn health() -> &'static str {
     "ok"
 }
 
-/// Builds the complete application router with tracing enabled.
+/// Builds the complete application router with tracing and OpenAPI documentation.
 pub fn build_routes(app_state: Arc<AppState>) -> Router<Arc<AppState>> {
     let (router, api) = OpenApiRouter::<Arc<AppState>>::with_openapi(ApiDoc::openapi())
         .routes(routes!(health))
@@ -64,11 +64,9 @@ pub fn build_routes(app_state: Arc<AppState>) -> Router<Arc<AppState>> {
 
     let swagger_router = SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone());
 
-    let router: Router<Arc<AppState>> = router
-        .merge(user_routes(app_state.clone())) // Ensure correct type
+    router
+        .merge(user_routes(app_state.clone()))
         .merge(swagger_router)
         .layer(TraceLayer::new_for_http())
-        .with_state(app_state);
-
-    router
+        .with_state(app_state)
 }

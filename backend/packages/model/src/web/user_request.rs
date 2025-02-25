@@ -1,7 +1,7 @@
 use axum::Json;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use validator::Validate;
+use validator::{Validate, ValidationError};
 
 #[derive(Serialize, Deserialize, Debug, Validate, ToSchema)]
 pub struct User {
@@ -27,17 +27,20 @@ impl From<Json<User>> for User {
     fn from(payload: Json<User>) -> Self {
         Self {
             username: payload.username.clone(),
+            email: payload.email.clone(),
             password: payload.password.clone(),
             role: payload.role.clone(),
-            email: payload.email.clone(),
         }
     }
 }
 
-fn validate_role(role: &str) -> Result<(), validator::ValidationError> {
-    let valid_roles = ["customer", "seller", "admin"];
-    if !valid_roles.contains(&role) {
-        return Err(validator::ValidationError::new("invalid_role"));
+/// Validates that the given role is one of the predefined valid roles.
+fn validate_role(role: &str) -> Result<(), ValidationError> {
+    const VALID_ROLES: [&str; 3] = ["customer", "seller", "admin"];
+
+    if !VALID_ROLES.contains(&role) {
+        return Err(ValidationError::new("invalid_role"));
     }
+
     Ok(())
 }

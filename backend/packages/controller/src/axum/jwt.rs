@@ -8,20 +8,21 @@ use axum::{
     response::IntoResponse,
 };
 use axum_extra::extract::cookie::CookieJar;
+use redis::AsyncCommands;
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use environment::Environment;
 use errors::{
     Error::{DatabaseErrorExecution, TokenError},
     Result,
 };
-use redis::AsyncCommands;
-use serde::{Deserialize, Serialize};
 use state::axum::AppState;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct JWTAuthMiddleware {
     pub entity_id: String,
-    pub access_token_uuid: uuid::Uuid,
+    pub access_token_uuid: Uuid,
     pub user_type: String,
     pub user_id: String,
 }
@@ -41,63 +42,40 @@ pub async fn jwt_auth(
             req.headers()
                 .get(header::AUTHORIZATION)
                 .and_then(|auth_header| auth_header.to_str().ok())
-                .and_then(|auth_value| {
-                    auth_value
-                        .strip_prefix("Bearer ")
-                        .map(|token| token.to_owned())
-                })
+                .and_then(|auth_value| auth_value.strip_prefix("Bearer ").map(String::from))
         });
 
     // Ensure access token is present, otherwise return an error
-    let access_token = match option_access_token {
-        Some(token) => token,
-        None => {
-            return Err(TokenError(
-                "You are not logged in, please provide token".to_string(),
-            ))
-        }
-    };
+    let access_token = option_access_token
+        .ok_or_else(|| TokenError("You are not logged in, please provide a token".to_string()))?;
 
     // Verify JWT token using public key from environment
     let env = Environment::new();
-    let access_token_details = match service::auth::jwt::verify_jwt_token(
-        env.access_token_public_key.to_owned(),
-        &access_token,
-    )
-    .await
-    {
-        Ok(token_details) => token_details,
-        Err(e) => return Err(TokenError(format!("fail: {}", e))),
-    };
+    let access_token_details =
+        service::auth::jwt::verify_jwt_token(env.access_token_public_key.to_owned(), &access_token)
+            .await
+            .map_err(|e| TokenError(format!("fail: {}", e)))?;
 
     // Parse UUID from token details
-    let access_token_uuid =
-        match uuid::Uuid::parse_str(&access_token_details.token_uuid.to_string()) {
-            Ok(token) => token,
-            Err(_) => return Err(TokenError("fail: Invalid token".to_string())),
-        };
+    let access_token_uuid = Uuid::parse_str(&access_token_details.token_uuid.to_string())
+        .map_err(|_| TokenError("fail: Invalid token".to_string()))?;
 
     // Connect to Redis and retrieve user ID associated with the token UUID
-    let mut redis_client = match data.redis_client.get_multiplexed_async_connection().await {
-        Ok(client) => client,
-        Err(error) => return Err(DatabaseErrorExecution(format!("Redis error: {}", error))),
-    };
+    let mut redis_client = data
+        .redis_client
+        .get_multiplexed_async_connection()
+        .await
+        .map_err(|e| DatabaseErrorExecution(format!("Redis error: {}", e)))?;
 
     // Retrieve user ID from Redis based on access token UUID
-    let entity_id = match redis_client
-        .get::<_, String>(access_token_uuid.clone().to_string())
+    let entity_id = redis_client
+        .get::<_, String>(access_token_uuid.to_string())
         .await
-    {
-        Ok(token) => token,
-        Err(_) => {
-            return Err(TokenError(
-                "fail: Token is invalid or session has expired".to_string(),
-            ))
-        }
-    };
+        .map_err(|_| TokenError("fail: Token is invalid or session has expired".to_string()))?;
 
     let user_type = access_token_details.user_role;
     let user_id = access_token_details.user_id;
+
     // Insert authenticated user details into request extensions
     req.extensions_mut().insert(JWTAuthMiddleware {
         access_token_uuid,
