@@ -66,7 +66,7 @@ run_prod:
 	@echo "Building for production..."
 	@$(CARGO) build --release
 	@echo "Running in production mode..."
-	@./target/release/$(TARGET)
+	@./target/release/virtumart
 
 # Push code to GitHub with a dynamic commit message
 push_code: run_tests
