@@ -13,7 +13,7 @@ use controller::axum::{
 };
 use model::{
     utoipa::user::User as UserUtoipa,
-    web::user_request::{User as UserRequest, UserLogin},
+    web::user::user_request::{User as UserRequest, UserLogin},
 };
 use state::axum::AppState;
 

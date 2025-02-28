@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use errors::Result;
 
-use model::web::{user_request::User, user_response::User as UserResponse};
+use model::web::user::{user_request::User, user_response::User as UserResponse};
 
 use repository::user::user_repository::UserRepository;
 

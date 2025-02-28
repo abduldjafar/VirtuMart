@@ -1,3 +1,3 @@
-pub mod user_request;
-pub mod user_response;
+pub mod store;
+pub mod user;
 pub mod web_response;

@@ -15,7 +15,7 @@ use errors::{
     Error::{LoginFail, StringError, TokenError},
     Result,
 };
-use model::web::user_request::{User as UserRequest, UserLogin};
+use model::web::user::user_request::{User as UserRequest, UserLogin};
 use service::{
     auth::jwt::{generate_jwt_token, save_token_data_to_redis},
     user::user_service::UserServiceTrait,

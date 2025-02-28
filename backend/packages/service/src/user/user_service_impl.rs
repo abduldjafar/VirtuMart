@@ -10,8 +10,8 @@ use errors::{
     Result,
 };
 use model::{
-    domain::user::User as UserData, web::user_request::User,
-    web::user_response::User as UserResponse,
+    domain::user::User as UserData, web::user::user_request::User,
+    web::user::user_response::User as UserResponse,
 };
 use repository::user::user_repository::UserRepositoryTrait as _;
 use serde_json::Value;
