@@ -30,9 +30,15 @@ impl UserRepositoryTrait for UserRepository {
 
 impl UserRepository {
     async fn is_data_empty(&self, field: &str, value: &str) -> Result<bool> {
-        let data: Vec<Value> = self
+        let new_value = if field != "id" {
+            format!("'{}'", value)
+        } else {
+            value.to_string()
+        };
+
+        let data: Vec<User> = self
             .db
-            .select_where("user", &format!("{} = '{}'", field, value), field)
+            .select_where("user", &format!("{} = {}", field, new_value), "*")
             .await?;
 
         Ok(data.is_empty())

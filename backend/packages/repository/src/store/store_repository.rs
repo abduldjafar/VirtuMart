@@ -6,7 +6,6 @@ use database::database::DatabaseClient;
 
 use errors::Result;
 
-
 use model::domain::store::Store;
 use serde_json::Value;
 

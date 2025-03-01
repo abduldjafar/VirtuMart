@@ -6,8 +6,7 @@ use surrealdb::sql::Thing;
 pub struct Store {
     #[serde(deserialize_with = "thing_to_string")]
     pub id: String,
-    #[serde(deserialize_with = "thing_to_string")]
-    pub user_id: String,
+    pub user_id: Thing,
     pub name: String,
     pub description: String,
     pub address: String,

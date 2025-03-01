@@ -1,8 +1,15 @@
+use std::sync::LazyLock;
+
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
+static RE_USER_PREFIX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^user_[a-z]{2}$").unwrap());
+
 #[derive(Serialize, Deserialize, Debug, Validate)]
 pub struct Store {
+    #[validate(regex(path = *RE_USER_PREFIX))]
+    pub user_id: String,
     #[validate(length(min = 5))]
     pub name: String,
     #[validate(length(min = 5))]

@@ -1,13 +1,12 @@
 use environment::Environment;
+use errors::Result;
 use surrealdb::{
     engine::remote::ws::{Client, Ws},
     opt::auth::Root,
-    Surreal,
+    Response, Surreal,
 };
-use errors::Result;
 
-
-pub async fn setup_direct_db() -> Result<Surreal<Client>> {
+pub(super) async fn setup_direct_db() -> Result<Surreal<Client>> {
     let env = Environment::new();
     let client = Surreal::new::<Ws>(format!("{}:{}", env.db_host, env.db_port)).await?;
     client
@@ -18,6 +17,30 @@ pub async fn setup_direct_db() -> Result<Surreal<Client>> {
         .await?;
     client.use_ns(env.db_namespace).use_db(env.db_name).await?;
     Ok(client)
+}
+
+pub(super) async fn execute_sql(query: &str) -> Result<Response> {
+    setup_direct_db()
+        .await?
+        .query(query)
+        .await
+        .map_err(|e| e.into())
+}
+
+pub(super) async fn cleanup_user(id: &str) -> Result<()> {
+    setup_direct_db()
+        .await?
+        .query(&format!("DELETE FROM user WHERE id = {}", id))
+        .await?;
+    Ok(())
+}
+
+pub(super) async fn cleanup_data(id: &str, tb: &str) -> Result<()> {
+    setup_direct_db()
+        .await?
+        .query(&format!("DELETE FROM {} WHERE id = {}", tb, id))
+        .await?;
+    Ok(())
 }
 
 #[macro_export]
