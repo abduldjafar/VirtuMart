@@ -36,11 +36,10 @@ impl StoreRepositoryTrait for StoreRepository {
             .cloned();
         Ok(stores)
     }
-    async fn delete_data(&self, _id: &str) -> Result<bool> {
-        // Implement the logic to delete store by id
-        unimplemented!()
+    async fn delete_data(&self, id: &str) -> Result<bool> {
+        self.db.delete(id).await
     }
-    async fn update_data(&self, _id: &str, _data: Value) -> Result<bool> {
-        unimplemented!()
+    async fn update_data(&self, id: &str, data: Value) -> Result<bool> {
+        self.db.update_record(id, "store", data).await
     }
 }
