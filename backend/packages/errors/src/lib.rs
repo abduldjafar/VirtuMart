@@ -23,7 +23,6 @@ use google_cloud_storage::{
     http::Error as GoogleCloudStorageError,
 };
 
-/// Custom result type using the `Error` enum.
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Clone, Debug, Serialize)]
