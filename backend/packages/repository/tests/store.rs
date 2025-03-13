@@ -6,7 +6,6 @@ mod tests {
     use errors::Result;
     use repository::store::store_repository::{StoreRepository, StoreRepositoryTrait};
     use surrealdb::sql::Thing;
-
     use tokio::test;
 
     use crate::setup_repo_with_surreal;
